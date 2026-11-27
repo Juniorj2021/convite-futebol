@@ -27,10 +27,12 @@ jobs:
             echo "Production deploy key is empty or unavailable to this workflow."
             exit 1
           fi
+          KEY_META="${CONVEX_DEPLOY_KEY%%|*}"
+          echo "Safe key metadata received by workflow: $KEY_META"
           case "$CONVEX_DEPLOY_KEY" in
             prod:reminiscent-oyster-516\|*) ;;
             *)
-              echo "Production key prefix or deployment slug does not match."
+              echo "Production key metadata does not match the expected deployment."
               exit 1
               ;;
           esac
