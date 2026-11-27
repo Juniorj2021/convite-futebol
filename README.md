@@ -11,17 +11,43 @@ Página de convite e confirmação de presença para o futebol no Campo do Coruj
 - Build output directory: `public`
 - Diretório de funções Pages: `functions/` (na raiz do repositório)
 
-A página gera a data do evento para amanhã no fuso `America/Sao_Paulo`. As confirmações são recebidas por `/api/confirmacoes` e armazenadas em Cloudflare KV.
+A página apresenta o convite e recebe confirmações com nome. Os registros ficam no Convex, separados pela data do evento, e nomes repetidos não são cadastrados duas vezes.
 
-## Configuração obrigatória do armazenamento
+## Convex utilizado
 
-1. No painel Cloudflare, abra **Workers & Pages → KV** e crie um namespace chamado `futebol-confirmacoes`.
-2. Abra **Workers & Pages → Pages → convitefutebol → Settings → Functions**.
-3. Em **KV namespace bindings**, adicione um binding:
-   - Variable name: `CONFIRMACOES`
-   - KV namespace: `futebol-confirmacoes`
-4. Salve e faça um novo deploy do projeto.
+Este projeto usa o deployment Convex já reservado para o Convite Futebol:
 
-Sem esse binding, a página abre, mas a API de confirmação responde que o armazenamento ainda não foi configurado.
+- Cloud URL: `https://reminiscent-oyster-516.convex.cloud`
+- HTTP Actions URL: `https://reminiscent-oyster-516.convex.site`
 
-O endereço do projeto é `https://convitefutebol.pages.dev`.
+O backend está em `convex/`. O endpoint HTTP `/confirmacoes` lista e registra os participantes.
+
+## Configuração necessária para concluir a publicação
+
+### 1. Autorizar o deploy automático do Convex pelo GitHub
+
+No painel do deployment Convex `reminiscent-oyster-516`, gere uma **Deploy Key**. Depois, no GitHub:
+
+1. Abra o repositório `Juniorj2021/convite-futebol`.
+2. Entre em **Settings → Secrets and variables → Actions**.
+3. Clique em **New repository secret**.
+4. Nome: `CONVEX_DEPLOY_KEY`.
+5. Valor: cole a Deploy Key gerada no Convex.
+
+Após salvar, abra **Actions** no GitHub e execute **Deploy Convex backend** (ou faça novo commit em `convex/`). Isso publica o schema e as funções no deployment existente.
+
+### 2. Conectar o Cloudflare Pages ao Convex
+
+No Cloudflare:
+
+1. Abra **Workers & Pages → Pages → convitefutebol → Settings → Variables and Secrets**.
+2. Adicione a variável para **Production**:
+   - Nome: `CONVEX_SITE_URL`
+   - Valor: `https://reminiscent-oyster-516.convex.site`
+3. Salve e faça um novo deploy do Pages.
+
+Não é necessário criar KV nem configurar o antigo binding `CONFIRMACOES`.
+
+## Endereço do convite
+
+`https://convitefutebol.pages.dev`
