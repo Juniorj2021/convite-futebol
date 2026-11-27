@@ -102,7 +102,7 @@ document.addEventListener("keydown", event => {
 });
 
 function maskScheduleTime(value) {
-  const digits = String(value).replace(/\\D/g, "").slice(-4).padStart(4, "0");
+  const digits = String(value).replace(/\D/g, "").slice(-4).padStart(4, "0");
   return digits.slice(0, 2) + ":" + digits.slice(2);
 }
 scheduleInput.addEventListener("input", () => {
