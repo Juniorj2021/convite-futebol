@@ -22,43 +22,44 @@ function json(data, status = 200) {
 
 export async function onRequest(context) {
   const { request, env } = context;
-  if (!env.CONFIRMACOES) {
-    return json({ error: "Armazenamento ainda não configurado. O administrador precisa concluir a configuração do Cloudflare." }, 503);
+  if (!env.CONVEX_SITE_URL) {
+    return json({ error: "A conexão com o Convex ainda não foi configurada no Cloudflare Pages." }, 503);
   }
 
   const eventDate = eventDateKey();
-  const prefix = `futebol:${eventDate}:`;
+  const baseUrl = env.CONVEX_SITE_URL.replace(/\/$/, "");
+  const endpoint = `${baseUrl}/confirmacoes`;
 
-  if (request.method === "GET") {
-    const names = [];
-    let cursor;
-    do {
-      const page = await env.CONFIRMACOES.list({ prefix, cursor, limit: 1000 });
-      const rows = await Promise.all(page.keys.map(async key => {
-        const value = await env.CONFIRMACOES.get(key.name, "json");
-        return value && typeof value.name === "string" ? value : null;
-      }));
-      names.push(...rows.filter(Boolean));
-      cursor = page.list_complete ? undefined : page.cursor;
-    } while (cursor);
-
-    names.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-    return json({ eventDate, total: names.length, participants: names });
-  }
-
-  if (request.method === "POST") {
-    let body;
-    try { body = await request.json(); } catch { return json({ error: "Envie um nome válido." }, 400); }
-    const name = String(body?.name || "").trim().replace(/\s+/g, " ");
-    if (name.length < 2 || name.length > 70) {
-      return json({ error: "Informe seu nome (de 2 a 70 caracteres)." }, 400);
+  try {
+    if (request.method === "GET") {
+      const response = await fetch(`${endpoint}?eventDate=${encodeURIComponent(eventDate)}`, {
+        headers: { "Accept": "application/json" },
+      });
+      const data = await response.json();
+      return json(data, response.status);
     }
 
-    const id = crypto.randomUUID();
-    const record = { name, createdAt: new Date().toISOString() };
-    await env.CONFIRMACOES.put(prefix + id, JSON.stringify(record));
-    return json({ ok: true, participant: record });
-  }
+    if (request.method === "POST") {
+      let body;
+      try { body = await request.json(); } catch {
+        return json({ error: "Envie um nome válido." }, 400);
+      }
+      const name = String(body?.name || "").trim().replace(/\s+/g, " ");
+      if (name.length < 2 || name.length > 70) {
+        return json({ error: "Informe seu nome (de 2 a 70 caracteres)." }, 400);
+      }
 
-  return json({ error: "Método não permitido." }, 405);
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ eventDate, name }),
+      });
+      const data = await response.json();
+      return json(data, response.status);
+    }
+
+    return json({ error: "Método não permitido." }, 405);
+  } catch {
+    return json({ error: "Não foi possível acessar o serviço de confirmações. Tente novamente." }, 502);
+  }
 }
