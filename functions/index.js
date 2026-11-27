@@ -143,6 +143,21 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   body{padding:10px}
   .hero{min-height:160px}
 }
+
+/* Lista de participantes: visual de lista simples, organizada e compacta */
+.names{display:block;list-style:decimal;padding-left:30px;margin:0}
+.names li{padding:0;border-bottom:1px solid #ffffff20}
+.names li:last-child{border-bottom:0}
+.names li::marker{color:#b8f34a;font-weight:900}
+.participant-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:8px 4px;background:transparent;border:0;border-radius:0}
+.person-name{flex:1 1 auto;min-width:0;font-size:15px;font-weight:700;line-height:1.35}
+.cancel-button{padding:7px 10px;font-size:11px}
+@media(max-width:600px){
+  .participants-panel{padding:15px}
+  .names{padding-left:26px}
+  .participant-row{min-height:43px;padding:7px 3px;gap:8px}
+  .person-name{font-size:14px}
+}
 </style></head><body><main>
 <section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
