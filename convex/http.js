@@ -47,6 +47,28 @@ http.route({
 });
 
 http.route({
+  path: "/local",
+  method: "GET",
+  handler: httpAction(async (ctx) => {
+    const location = await ctx.runQuery(internal.local.get, {});
+    return json({ location });
+  }),
+});
+
+http.route({
+  path: "/local",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "Informe um local válido." }, 400); }
+    const location = String(body?.location || "").trim().replace(/\\s+/g, " ");
+    if (location.length < 2 || location.length > 100) return json({ error: "O local deve ter entre 2 e 100 caracteres." }, 400);
+    await ctx.runMutation(internal.local.set, { location });
+    return json({ ok: true, location });
+  }),
+});
+
+http.route({
   path: "/confirmacoes",
   method: "GET",
   handler: httpAction(async (ctx, request) => {
