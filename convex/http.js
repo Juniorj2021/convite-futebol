@@ -18,6 +18,12 @@ function validDate(value) {
   return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
+function normalizeName(name) {
+  return name.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("pt-BR");
+}
+
 http.route({
   path: "/confirmacoes",
   method: "GET",
@@ -49,22 +55,56 @@ http.route({
       return json({ error: "Informe seu nome (de 2 a 70 caracteres)." }, 400);
     }
 
-    const normalizedName = name
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLocaleLowerCase("pt-BR");
-
+    const cancellationToken = crypto.randomUUID();
     const result = await ctx.runMutation(internal.confirmacoes.addForEvent, {
       eventDate,
       name,
-      normalizedName,
+      normalizedName: normalizeName(name),
+      cancellationToken,
     });
 
     if (result.duplicate) {
       return json({ error: "Este nome já confirmou presença.", duplicate: true }, 409);
     }
 
-    return json({ ok: true, participant: result.participant });
+    return json({
+      ok: true,
+      eventDate,
+      participant: result.participant,
+      cancellationToken: result.cancellationToken,
+    });
+  }),
+});
+
+http.route({
+  path: "/confirmacoes",
+  method: "DELETE",
+  handler: httpAction(async (ctx, request) => {
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return json({ error: "Não foi possível validar o cancelamento." }, 400);
+    }
+
+    const eventDate = body?.eventDate;
+    const name = String(body?.name || "").trim().replace(/\s+/g, " ");
+    const cancellationToken = String(body?.cancellationToken || "");
+    if (!validDate(eventDate) || name.length < 2 || !cancellationToken) {
+      return json({ error: "Dados de cancelamento inválidos." }, 400);
+    }
+
+    const cancelled = await ctx.runMutation(internal.confirmacoes.cancelForEvent, {
+      eventDate,
+      normalizedName: normalizeName(name),
+      cancellationToken,
+    });
+
+    if (!cancelled) {
+      return json({ error: "Não foi possível cancelar. Use o mesmo navegador em que confirmou presença." }, 403);
+    }
+
+    return json({ ok: true });
   }),
 });
 
