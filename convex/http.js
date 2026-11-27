@@ -60,11 +60,11 @@ http.route({
       normalizedName,
     });
 
-    return json({
-      ok: true,
-      duplicate: result.duplicate,
-      participant: result.participant,
-    }, result.duplicate ? 409 : 200);
+    if (result.duplicate) {
+      return json({ error: "Este nome já confirmou presença.", duplicate: true }, 409);
+    }
+
+    return json({ ok: true, participant: result.participant });
   }),
 });
 
