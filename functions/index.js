@@ -102,19 +102,40 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape" && !participantsScreen.hidden) closeParticipants();
 });
 
-function maskScheduleTime(value) {
-  const digits = String(value).replace(/\D/g, "").slice(-4).padStart(4, "0");
-  return digits.slice(0, 2) + ":" + digits.slice(2);
+let scheduleDigits = "";
+function renderScheduleDigits() {
+  const digits = scheduleDigits.padStart(4, "0");
+  scheduleInput.value = digits.slice(0, 2) + ":" + digits.slice(2);
 }
-scheduleInput.addEventListener("input", () => {
-  scheduleInput.value = maskScheduleTime(scheduleInput.value);
+scheduleInput.addEventListener("keydown", event => {
+  if (/^\\d$/.test(event.key)) {
+    event.preventDefault();
+    scheduleDigits = (scheduleDigits + event.key).slice(-4);
+    renderScheduleDigits();
+  } else if (event.key === "Backspace") {
+    event.preventDefault();
+    scheduleDigits = scheduleDigits.slice(0, -1);
+    renderScheduleDigits();
+  } else if (event.key === "Delete") {
+    event.preventDefault();
+    scheduleDigits = "";
+    renderScheduleDigits();
+  } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+    event.preventDefault();
+  }
+});
+scheduleInput.addEventListener("paste", event => {
+  event.preventDefault();
+  const pasted = (event.clipboardData || window.clipboardData).getData("text").replace(/\\D/g, "").slice(-4);
+  scheduleDigits = pasted;
+  renderScheduleDigits();
 });
 editTime.addEventListener("click", () => {
+  scheduleDigits = "";
   scheduleInput.value = "00:00";
   scheduleStatus.textContent = "Digite os números da direita para a esquerda. Ex.: 1 = 00:01; 1234 = 12:34.";
   scheduleEditor.hidden = false;
   scheduleInput.focus();
-  scheduleInput.select();
 });
 async function loadSchedule() {
   try {
