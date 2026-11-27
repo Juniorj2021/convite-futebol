@@ -4,7 +4,7 @@ import { internalQuery, internalMutation } from "./_generated/server";
 export const get = internalQuery({
   args: { eventDate: v.string() },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
     const key = "horario:" + args.eventDate;
     const row = await ctx.db.query("configuracoes")
       .withIndex("by_key", (q) => q.eq("key", key))
