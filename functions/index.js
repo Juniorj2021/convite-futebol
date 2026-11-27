@@ -1,4 +1,3 @@
-const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfqI61hldeVto7ooqm6kZnhChei0pvuGS4ZwPwdmWl8Tmxqhg/viewform";
 const OG_IMAGE = "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=630&q=85";
 
 function tomorrowDate() {
@@ -40,7 +39,10 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 .content{padding:28px}.date{color:#b8f34a;font-weight:800;font-size:18px;text-transform:capitalize;margin:0 0 22px}
 .details{display:grid;gap:14px;margin-bottom:24px}.detail{display:flex;gap:12px;align-items:center;font-size:17px}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
 .notice{border-left:4px solid #b8f34a;background:#ffffff0d;padding:15px 16px;border-radius:0 12px 12px 0;line-height:1.5;margin:22px 0 26px}
-a.cta{display:block;text-align:center;background:#b8f34a;color:#102b13;text-decoration:none;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px}
+.form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
+button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
+button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
+.participants{margin-top:28px;padding-top:22px;border-top:1px solid #ffffff26}.participants h2{font-size:20px;margin:0 0 6px}.count{color:#b8f34a;font-weight:800;margin:0 0 14px}.names{list-style:none;margin:0;padding:0;display:grid;gap:8px}.names li{padding:11px 13px;background:#ffffff0d;border-radius:9px;overflow-wrap:anywhere}.empty{color:#c4d2e1;font-size:14px}
 .foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 </style></head><body><main>
 <section class="hero"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
@@ -48,7 +50,76 @@ a.cta{display:block;text-align:center;background:#b8f34a;color:#102b13;text-deco
 <div class="details"><div class="detail"><span class="symbol">⏰</span><span><strong>Horário:</strong> 6h</span></div>
 <div class="detail"><span class="symbol">📍</span><span><strong>Local:</strong> Campo do Corujão</span></div></div>
 <div class="notice"><strong>ATENÇÃO!</strong><br>Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
-<a class="cta" href="${FORM_URL}" target="_blank" rel="noopener noreferrer">CONFIRMAR MINHA PARTICIPAÇÃO</a>
-<p class="foot">Confirme sua presença pelo formulário.</p></section></main></body></html>`;
+<form id="confirm-form">
+<h2 class="form-title">Confirme sua participação</h2>
+<label for="participant-name">Seu nome completo</label>
+<input class="name-input" id="participant-name" name="name" type="text" minlength="2" maxlength="70" autocomplete="name" placeholder="Digite seu nome" required>
+<button id="submit-button" type="submit">CONFIRMAR MINHA PARTICIPAÇÃO</button>
+<p class="status" id="form-status" role="status" aria-live="polite"></p>
+</form>
+<section class="participants" aria-live="polite">
+<h2>Participantes confirmados</h2>
+<p class="count" id="participant-count">Carregando confirmações...</p>
+<ul class="names" id="participant-list"></ul>
+</section>
+<p class="foot">Sua confirmação ficará visível para os demais participantes.</p></section></main>
+<script>
+const form = document.getElementById("confirm-form");
+const input = document.getElementById("participant-name");
+const button = document.getElementById("submit-button");
+const status = document.getElementById("form-status");
+const count = document.getElementById("participant-count");
+const list = document.getElementById("participant-list");
+
+function showParticipants(data) {
+  list.replaceChildren();
+  count.textContent = data.total + (data.total === 1 ? " pessoa confirmou presença" : " pessoas confirmaram presença");
+  if (!data.total) {
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = "Ainda não há confirmações. Seja o primeiro!";
+    list.appendChild(li);
+    return;
+  }
+  data.participants.forEach(person => {
+    const li = document.createElement("li");
+    li.textContent = person.name;
+    list.appendChild(li);
+  });
+}
+async function loadParticipants() {
+  try {
+    const response = await fetch("/api/confirmacoes", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível carregar a lista.");
+    showParticipants(data);
+  } catch (error) {
+    count.textContent = "Não foi possível carregar as confirmações.";
+    status.textContent = error.message;
+  }
+}
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  button.disabled = true;
+  status.textContent = "Registrando sua confirmação...";
+  try {
+    const response = await fetch("/api/confirmacoes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: input.value })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível confirmar.");
+    status.textContent = "Presença confirmada com sucesso!";
+    input.value = "";
+    await loadParticipants();
+  } catch (error) {
+    status.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+loadParticipants();
+</script></body></html>`;
   return new Response(html, { headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "public, max-age=60, s-maxage=300", "X-Content-Type-Options": "nosniff" } });
 }
