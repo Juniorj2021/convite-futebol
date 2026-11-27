@@ -31,7 +31,7 @@ jobs:
           else
             echo "VAPID_PRIVATE_KEY secret is not configured."
           fi
-      - name: Deploy to the linked Convex deployment
+      - name: Deploy to Convex Production
         env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_ENV_DEPLOY_KEY }}
         run: npx convex deploy
