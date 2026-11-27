@@ -1,0 +1,12 @@
+{
+  "name": "convite-futebol",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Backend Convex para confirmação de presença do Convite Futebol",
+  "scripts": {
+    "deploy:convex": "convex deploy"
+  },
+  "dependencies": {
+    "convex": "latest"
+  }
+}
