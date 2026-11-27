@@ -87,9 +87,7 @@ export const cancelForEvent = internalMutation({
       .first();
 
     if (!existing) return false;
-    // Registros antigos, criados antes do código privado, podem ser removidos pelo nome.
-    // Registros novos continuam protegidos pelo código salvo no navegador de quem confirmou.
-    if (existing.cancellationToken && existing.cancellationToken !== args.cancellationToken) return false;
+    // A retirada é livre: qualquer visitante pode remover qualquer nome da lista.
 
     await ctx.db.delete(existing._id);
     return true;
