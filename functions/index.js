@@ -49,14 +49,14 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .details{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
   .detail{font-size:15px}
   main{width:100%;border-radius:0;min-height:100svh}
-  .hero{min-height:clamp(105px,17svh,145px);padding:14px}
-  .content{padding:10px 14px}
-  .date{font-size:14px;margin:0 0 9px}
-  .detail{font-size:clamp(11px,3vw,13px);align-items:center;gap:6px}.detail .time-line{gap:4px;flex-wrap:nowrap}.detail strong{white-space:normal}
-  .symbol{width:27px;height:27px;border-radius:8px;font-size:14px}.edit-time{width:24px;height:24px;font-size:13px}.event-status{font-size:12px;padding:7px 9px;margin:0 0 10px}
-  .notice{padding:9px 11px;margin:10px 0 12px;font-size:12px;line-height:1.35}.participants{align-items:center;padding:8px 10px;gap:8px;margin:0 0 10px}
-  .count{font-size:12px;line-height:1.25}
-  .participants-toggle{padding:7px 9px;font-size:11px}.form-title{font-size:16px;margin:0 0 7px}.name-input{font-size:14px;padding:10px}button{font-size:13px;padding:10px 12px;margin-top:8px}.status{font-size:12px;min-height:16px;margin:6px 0 0}.foot{font-size:10px;margin-top:8px}
+  .hero{min-height:clamp(135px,21svh,175px);padding:18px}
+  .content{padding:16px 18px}
+  .date{font-size:16px;margin:0 0 13px}
+  .detail{font-size:clamp(13px,3.5vw,15px);align-items:center;gap:8px}.detail .time-line{gap:4px;flex-wrap:nowrap}.detail strong{white-space:normal}
+  .symbol{width:31px;height:31px;border-radius:9px;font-size:16px}.edit-time{width:27px;height:27px;font-size:14px}.event-status{font-size:13px;padding:9px 11px;margin:0 0 13px}
+  .notice{padding:12px 14px;margin:13px 0 16px;font-size:13px;line-height:1.45}.participants{align-items:center;padding:10px 12px;gap:10px;margin:0 0 14px}
+  .count{font-size:13px;line-height:1.35}
+  .participants-toggle{padding:9px 11px;font-size:12px}.form-title{font-size:18px;margin:0 0 9px}.name-input{font-size:16px;padding:13px}button{font-size:14px;padding:13px 14px;margin-top:10px}.status{font-size:13px;min-height:18px;margin:8px 0 0}.foot{font-size:11px;margin-top:12px}
   .participants-screen{padding:12px}
   .participants-panel{max-height:calc(100dvh - 24px);padding:16px}
   .participants-header{align-items:flex-start}
@@ -67,13 +67,13 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 @media (max-width:380px){
   body{padding:0}
   main{border-radius:0;min-height:100svh}
-  .hero{min-height:105px;padding:14px}
-  .content{padding:10px 12px}
+  .hero{min-height:130px;padding:16px}
+  .content{padding:13px 15px}
   .participants{flex-wrap:nowrap}
   .count{flex:1 1 auto}
   .participants-toggle{width:auto}
-  .detail{gap:5px}
-  .edit-time{width:22px;height:22px;flex:none}
+  .detail{gap:6px}
+  .edit-time{width:25px;height:25px;flex:none}
   .participant-row{padding:9px;gap:6px}
   .cancel-button{padding:8px;font-size:11px}
 }
