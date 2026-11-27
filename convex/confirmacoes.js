@@ -109,9 +109,9 @@ export const removeExpired = internalMutation({
     const rows = await ctx.db.query("confirmacoes").take(1000);
     let removed = 0;
     for (const row of rows) {
-      // A lista fica disponível durante o evento e por mais 24 horas.
+      // A lista fica disponível durante o evento e por mais 5 horas após o horário programado.
       const eventStart = new Date(row.eventDate + "T" + time + ":00-03:00").getTime();
-      if (Number.isFinite(eventStart) && now >= eventStart + 24 * 60 * 60 * 1000) {
+      if (Number.isFinite(eventStart) && now >= eventStart + 5 * 60 * 60 * 1000) {
         await ctx.db.delete(row._id);
         removed++;
       }
