@@ -37,7 +37,7 @@ main{width:min(100%,620px);overflow:hidden;border-radius:22px;background:#102b4d
 .tag{display:inline-block;background:#b8f34a;color:#102b13;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:8px 12px;border-radius:30px;margin-bottom:12px}
 h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;letter-spacing:-1.5px}
 .content{padding:28px}.date{color:#b8f34a;font-weight:800;font-size:18px;text-transform:capitalize;margin:0 0 22px}
-.details{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 22px;align-items:center;margin-bottom:12px}.detail{display:flex;gap:10px;align-items:center;font-size:16px;min-width:0}.detail .time-line{min-width:0;flex-wrap:wrap}.detail strong{white-space:nowrap}.event-status[hidden]{display:none}.event-status{margin:0 0 24px;padding:11px 14px;border-radius:10px;background:#ffffff0d;border:1px solid #ffffff26;text-align:center;font-weight:900;letter-spacing:.3px;color:#ffd2ca}.event-status.confirmed{color:#b8f34a;border-color:#b8f34a66;background:#b8f34a12}.time-line{display:flex;align-items:center;gap:8px}.edit-time{width:30px;height:30px;margin:0;padding:0;border:1px solid #7890aa;border-radius:8px;background:#ffffff16;color:#b8f34a;font-size:16px;line-height:1}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
+.details{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 22px;align-items:center;margin-bottom:12px}.detail{display:flex;gap:10px;align-items:center;font-size:16px;min-width:0}.detail .time-line{min-width:0;flex-wrap:wrap}.detail strong{white-space:nowrap}.event-status[hidden]{display:none}.event-status{margin:0 0 24px;padding:11px 14px;border-radius:10px;background:#ffffff0d;border:1px solid #ffffff26;text-align:center;font-weight:900;letter-spacing:.3px;color:#ffd2ca}.event-status.confirmed{color:#b8f34a;border-color:#b8f34a66;background:#b8f34a12}.time-line{display:flex;align-items:center;gap:8px}.detail .time-line>span:first-child{min-width:0;overflow-wrap:anywhere}.edit-time{flex:0 0 30px;min-width:30px;width:30px;height:30px;margin:0;padding:0;border:1px solid #7890aa;border-radius:8px;background:#ffffff16;color:#b8f34a;font-size:16px;line-height:1}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
 .notice{border-left:4px solid #b8f34a;background:#ffffff0d;padding:15px 16px;border-radius:0 12px 12px 0;line-height:1.5;margin:22px 0 26px}
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
@@ -52,7 +52,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .hero{min-height:clamp(135px,21svh,175px);padding:18px}
   .content{padding:16px 18px}
   .date{font-size:16px;margin:0 0 13px}
-  .detail{font-size:clamp(13px,3.5vw,15px);align-items:center;gap:8px}.detail .time-line{gap:4px;flex-wrap:nowrap}.detail strong{white-space:normal}
+  .detail{font-size:clamp(13px,3.5vw,15px);align-items:center;gap:8px}.detail .time-line{gap:4px;flex-wrap:nowrap}.detail strong{white-space:normal}.edit-time{flex:0 0 27px;min-width:27px;width:27px}
   .symbol{width:31px;height:31px;border-radius:9px;font-size:16px}.edit-time{width:27px;height:27px;font-size:14px}.event-status{font-size:13px;padding:9px 11px;margin:0 0 13px}
   .notice{padding:12px 14px;margin:13px 0 16px;font-size:13px;line-height:1.45}.participants{align-items:center;padding:10px 12px;gap:10px;margin:0 0 14px}
   .count{font-size:13px;line-height:1.35}
@@ -73,7 +73,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .count{flex:1 1 auto}
   .participants-toggle{width:auto}
   .detail{gap:6px}
-  .edit-time{width:25px;height:25px;flex:none}
+  .edit-time{flex:0 0 25px;min-width:25px;width:25px;height:25px}
   .participant-row{padding:9px;gap:6px}
   .cancel-button{padding:8px;font-size:11px}
 }
