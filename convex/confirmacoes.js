@@ -28,6 +28,7 @@ export const addForEvent = internalMutation({
     eventDate: v.string(),
     name: v.string(),
     normalizedName: v.string(),
+    cancellationToken: v.string(),
   },
   returns: v.object({
     duplicate: v.boolean(),
@@ -35,6 +36,7 @@ export const addForEvent = internalMutation({
       name: v.string(),
       createdAt: v.number(),
     }),
+    cancellationToken: v.string(),
   }),
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -48,6 +50,7 @@ export const addForEvent = internalMutation({
       return {
         duplicate: true,
         participant: { name: existing.name, createdAt: existing.createdAt },
+        cancellationToken: "",
       };
     }
 
@@ -57,8 +60,38 @@ export const addForEvent = internalMutation({
       name: args.name,
       normalizedName: args.normalizedName,
       createdAt,
+      cancellationToken: args.cancellationToken,
     });
 
-    return { duplicate: false, participant: { name: args.name, createdAt } };
+    return {
+      duplicate: false,
+      participant: { name: args.name, createdAt },
+      cancellationToken: args.cancellationToken,
+    };
+  },
+});
+
+export const cancelForEvent = internalMutation({
+  args: {
+    eventDate: v.string(),
+    normalizedName: v.string(),
+    cancellationToken: v.string(),
+  },
+  returns: v.boolean(),
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("confirmacoes")
+      .withIndex("by_eventDate_and_normalizedName", (q) =>
+        q.eq("eventDate", args.eventDate).eq("normalizedName", args.normalizedName),
+      )
+      .first();
+
+    if (!existing || !existing.cancellationToken ||
+        existing.cancellationToken !== args.cancellationToken) {
+      return false;
+    }
+
+    await ctx.db.delete(existing._id);
+    return true;
   },
 });
