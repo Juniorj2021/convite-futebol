@@ -43,7 +43,7 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
 .participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}.cancel-status{min-height:18px;color:#ffd2ca;font-size:13px;margin:12px 0 0}
-.schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
+.schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.recovery-box{display:none;margin:14px 0 0;padding:14px;background:#0b2340;border:1px solid #b8f34a66;border-radius:12px}.recovery-box.visible{display:block}.recovery-box strong{display:block;color:#b8f34a;margin-bottom:6px}.recovery-code{width:100%;padding:12px;border:1px solid #7890aa;border-radius:9px;background:#fff;color:#102b4d;font-size:14px;font-weight:700;letter-spacing:.5px}.recovery-copy{margin-top:8px;padding:11px;font-size:13px}.recovery-note{font-size:12px;line-height:1.45;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 </style></head><body><main>
 <section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
@@ -68,6 +68,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <input class="name-input" id="participant-name" name="name" type="text" minlength="2" maxlength="70" autocomplete="name" placeholder="Digite seu nome" required>
 <button id="submit-button" type="submit">CONFIRMAR MINHA PARTICIPAÇÃO</button>
 <p class="status" id="form-status" role="status" aria-live="polite"></p>
+<div class="recovery-box" id="recovery-box"><strong>GUARDE SEU CÓDIGO DE RETIRADA</strong><input class="recovery-code" id="recovery-code" type="text" readonly aria-label="Código de retirada"><button class="recovery-copy" id="recovery-copy" type="button">COPIAR CÓDIGO</button><p class="recovery-note">Com esse código, você poderá retirar sua confirmação mesmo se trocar de celular ou perder os dados do navegador. Guarde-o em local seguro: quem tiver o código poderá cancelar esta confirmação.</p></div>
 </form>
 <p class="foot">Sua confirmação ficará visível para os demais participantes.</p></section></main>
 <script>
@@ -75,6 +76,13 @@ const form = document.getElementById("confirm-form");
 const input = document.getElementById("participant-name");
 const button = document.getElementById("submit-button");
 const status = document.getElementById("form-status");
+const recoveryBox = document.getElementById("recovery-box");
+const recoveryCode = document.getElementById("recovery-code");
+const recoveryCopy = document.getElementById("recovery-copy");
+recoveryCopy.addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(recoveryCode.value); recoveryCopy.textContent = "CÓDIGO COPIADO!"; }
+  catch { recoveryCode.focus(); recoveryCode.select(); recoveryCopy.textContent = "SELECIONE E COPIE O CÓDIGO"; }
+});
 const count = document.getElementById("participant-count");
 const list = document.getElementById("participant-list");
 const cancelStatus = document.getElementById("cancel-status");
@@ -219,8 +227,12 @@ async function cancelParticipation(name, eventDate, key, cancelButton) {
   cancelStatus.textContent = "Cancelando sua participação...";
   status.textContent = "";
   try {
-    const cancellationToken = localStorage.getItem(key);
-    if (!cancellationToken) throw new Error("Código de cancelamento não encontrado neste navegador.");
+    let cancellationToken = localStorage.getItem(key);
+    if (!cancellationToken) {
+      cancellationToken = window.prompt("Este navegador não tem o código salvo. Cole aqui o código de retirada que recebeu ao confirmar presença:");
+      if (!cancellationToken || !cancellationToken.trim()) throw new Error("Informe seu código de retirada para continuar.");
+      cancellationToken = cancellationToken.trim();
+    }
     const response = await fetch("/api/confirmacoes", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -300,7 +312,10 @@ form.addEventListener("submit", async event => {
     try {
       localStorage.setItem(cancellationKey(data.participant.name, data.eventDate), data.cancellationToken);
     } catch {}
-    status.textContent = "Presença confirmada! Você poderá retirar sua confirmação neste navegador.";
+    status.textContent = "Presença confirmada! Guarde também seu código de retirada abaixo.";
+    recoveryCode.value = data.cancellationToken;
+    recoveryBox.classList.add("visible");
+    recoveryCopy.textContent = "COPIAR CÓDIGO";
     input.value = "";
     await loadParticipants();
   } catch (error) {
