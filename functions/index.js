@@ -37,7 +37,7 @@ main{width:min(100%,620px);overflow:hidden;border-radius:22px;background:#102b4d
 .tag{display:inline-block;background:#b8f34a;color:#102b13;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:8px 12px;border-radius:30px;margin-bottom:12px}
 h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;letter-spacing:-1.5px}
 .content{padding:28px}.date{color:#b8f34a;font-weight:800;font-size:18px;text-transform:capitalize;margin:0 0 22px}
-.details{display:grid;gap:14px;margin-bottom:24px}.detail{display:flex;gap:12px;align-items:center;font-size:17px}.time-line{display:flex;align-items:center;gap:8px}.edit-time{width:30px;height:30px;margin:0;padding:0;border:1px solid #7890aa;border-radius:8px;background:#ffffff16;color:#b8f34a;font-size:16px;line-height:1}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
+.details{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 22px;align-items:center;margin-bottom:12px}.detail{display:flex;gap:10px;align-items:center;font-size:16px;min-width:0}.detail .time-line{min-width:0;flex-wrap:wrap}.detail strong{white-space:nowrap}.event-status{margin:0 0 24px;padding:11px 14px;border-radius:10px;background:#ffffff0d;border:1px solid #ffffff26;text-align:center;font-weight:900;letter-spacing:.3px;color:#ffd2ca}.event-status.confirmed{color:#b8f34a;border-color:#b8f34a66;background:#b8f34a12}.time-line{display:flex;align-items:center;gap:8px}.edit-time{width:30px;height:30px;margin:0;padding:0;border:1px solid #7890aa;border-radius:8px;background:#ffffff16;color:#b8f34a;font-size:16px;line-height:1}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
 .notice{border-left:4px solid #b8f34a;background:#ffffff0d;padding:15px 16px;border-radius:0 12px 12px 0;line-height:1.5;margin:22px 0 26px}
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
@@ -46,6 +46,8 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 .schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 @media (max-width:600px){
   body{padding:12px;place-items:start center}
+  .details{grid-template-columns:1fr;gap:10px}
+  .detail{font-size:15px}
   main{width:100%;border-radius:18px}
   .hero{min-height:clamp(190px,42vw,230px);padding:22px}
   .content{padding:clamp(18px,4.5vw,24px)}
@@ -86,6 +88,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <section class="content"><p class="date">${esc(date)}</p>
 <div class="details"><div class="detail"><span class="symbol">⏰</span><span class="time-line"><span><strong>Horário:</strong> <span id="event-time">06:00</span></span><button class="edit-time" id="edit-time" type="button" aria-label="Editar horário" title="Editar horário">✎</button></span></div>
 <div class="detail"><span class="symbol">📍</span><span class="time-line"><span><strong>Local:</strong> <span id="event-location">Campo do Corujão</span></span><button class="edit-time" id="edit-location" type="button" aria-label="Editar local" title="Editar local">✎</button></span></div></div>
+<p class="event-status" id="event-status" role="status" aria-live="polite">Futebol ainda não confirmado</p>
 <section class="schedule-editor" id="location-editor" hidden><p class="schedule-title">Editar local</p><div class="schedule-controls"><input id="location-input" type="text" maxlength="100" placeholder="Informe o local" aria-label="Novo local"><button id="location-save" type="button">SALVAR</button></div><p class="schedule-status" id="location-status" role="status"></p></section>
 <section class="schedule-editor" id="schedule-editor" hidden><p class="schedule-title">Editar horário</p><div class="schedule-controls"><input id="schedule-input" type="text" inputmode="numeric" maxlength="5" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" value="06:00" aria-label="Novo horário no formato 24 horas"><button id="schedule-save" type="button">SALVAR</button></div><p class="schedule-status" id="schedule-status" role="status"></p></section>
 <div class="notice"><strong>ATENÇÃO!</strong><br>Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
@@ -112,6 +115,7 @@ const input = document.getElementById("participant-name");
 const button = document.getElementById("submit-button");
 const status = document.getElementById("form-status");
 const count = document.getElementById("participant-count");
+const eventStatus = document.getElementById("event-status");
 const list = document.getElementById("participant-list");
 const cancelStatus = document.getElementById("cancel-status");
 const participantsToggle = document.getElementById("participants-toggle");
@@ -275,6 +279,9 @@ function showParticipants(data) {
   list.replaceChildren();
   cancelStatus.textContent = "";
   count.textContent = data.total + (data.total === 1 ? " pessoa confirmou presença" : " pessoas confirmaram presença");
+  const confirmed = data.total >= 10;
+  eventStatus.textContent = confirmed ? "FUTEBOL CONFIRMADO!" : "FUTEBOL AINDA NÃO CONFIRMADO";
+  eventStatus.classList.toggle("confirmed", confirmed);
   if (!data.total) {
     const li = document.createElement("li");
     li.className = "empty";
