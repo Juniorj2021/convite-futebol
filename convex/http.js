@@ -40,7 +40,7 @@ http.route({
     let body;
     try { body = await request.json(); } catch { return json({ error: "Informe um horário válido." }, 400); }
     const time = String(body?.time || "");
-    if (!/^(?:[01]\\d|2[0-3]):[0-5]\\d$/.test(time)) return json({ error: "Horário inválido." }, 400);
+    if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)) return json({ error: "Horário inválido." }, 400);
     await ctx.runMutation(internal.horario.set, { time });
     return json({ ok: true, time });
   }),
