@@ -90,7 +90,7 @@ http.route({
     const eventDate = body?.eventDate;
     const name = String(body?.name || "").trim().replace(/\s+/g, " ");
     const cancellationToken = String(body?.cancellationToken || "");
-    if (!validDate(eventDate) || name.length < 2 || !cancellationToken) {
+    if (!validDate(eventDate) || name.length < 2) {
       return json({ error: "Dados de cancelamento inválidos." }, 400);
     }
 
