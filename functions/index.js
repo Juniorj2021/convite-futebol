@@ -64,7 +64,6 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 </div>
 <form id="confirm-form">
 <h2 class="form-title">Confirme sua participação</h2>
-<label for="participant-name">Seu nome</label>
 <input class="name-input" id="participant-name" name="name" type="text" minlength="2" maxlength="70" autocomplete="name" placeholder="Digite seu nome" required>
 <button id="submit-button" type="submit">CONFIRMAR MINHA PARTICIPAÇÃO</button>
 <p class="status" id="form-status" role="status" aria-live="polite"></p>
