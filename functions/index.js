@@ -311,7 +311,7 @@ const locationSave = document.getElementById("location-save");
 const locationStatus = document.getElementById("location-status");
 const pushButton = document.getElementById("enable-push");
 const pushHelp = document.getElementById("push-help");
-const VAPID_PUBLIC_KEY = "BJoCs45XKiJk9UpIMQl0TYloUh-own_uOdR9VaMGc6672N2ruiv2zpYZhZRQHJ3ejF3pJlPGadJnSwyGxoAW8I4";
+const VAPID_PUBLIC_KEY = "BJoCs45XKiJk9UpIMQl0TYloUh-own_uOdR9VaMGc6672N2ruiv6zpYZhZRQHJ3ejF3pJlPGadJnSwyGxoAW8I4";
 function closeParticipants() {
   participantsScreen.hidden = true;
   participantsToggle.setAttribute("aria-expanded", "false");
