@@ -49,7 +49,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <section class="content"><p class="date">${esc(date)}</p>
 <div class="details"><div class="detail"><span class="symbol">⏰</span><span><strong>Horário:</strong> <span id="event-time">06:00</span></span></div>
 <div class="detail"><span class="symbol">📍</span><span><strong>Local:</strong> Campo do Corujão</span></div></div>
-<details class="schedule-editor"><summary>Alterar horário do futebol</summary><div class="schedule-controls"><input id="schedule-input" type="time" value="06:00" aria-label="Novo horário"><button id="schedule-save" type="button">SALVAR HORÁRIO</button></div><p class="schedule-status" id="schedule-status" role="status"></p></details>
+<details class="schedule-editor"><summary>Alterar horário do futebol</summary><div class="schedule-controls"><input id="schedule-input" type="text" inputmode="numeric" maxlength="5" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" value="06:00" aria-label="Novo horário no formato 24 horas"><button id="schedule-save" type="button">SALVAR HORÁRIO</button></div><p class="schedule-status" id="schedule-status" role="status"></p></details>
 <div class="notice"><strong>ATENÇÃO!</strong><br>Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
 <section class="participants" aria-live="polite">
 <button class="participants-toggle" id="participants-toggle" type="button" aria-expanded="false" aria-controls="participants-panel">MOSTRAR PARTICIPANTES</button>
@@ -97,8 +97,8 @@ async function loadSchedule() {
   } catch (error) { scheduleStatus.textContent = error.message; }
 }
 scheduleSave.addEventListener("click", async () => {
-  const time = scheduleInput.value;
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+  const time = scheduleInput.value.trim();
+  if (!/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/.test(time)) {
     scheduleStatus.textContent = "Informe um horário válido.";
     return;
   }
