@@ -29,7 +29,9 @@ http.route({
   path: "/horario",
   method: "GET",
   handler: httpAction(async (ctx) => {
-    const time = await ctx.runQuery(internal.horario.get, {});
+    const eventDate = new URL(request.url).searchParams.get("eventDate");
+    if (!validDate(eventDate)) return json({ error: "Data do evento inválida." }, 400);
+    const time = await ctx.runQuery(internal.horario.get, { eventDate });
     return json({ time });
   }),
 });
