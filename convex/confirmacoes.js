@@ -75,7 +75,7 @@ export const cancelForEvent = internalMutation({
   args: {
     eventDate: v.string(),
     normalizedName: v.string(),
-    cancellationToken: v.string(),
+    cancellationToken: v.optional(v.string()),
   },
   returns: v.boolean(),
   handler: async (ctx, args) => {
@@ -86,10 +86,10 @@ export const cancelForEvent = internalMutation({
       )
       .first();
 
-    if (!existing || !existing.cancellationToken ||
-        existing.cancellationToken !== args.cancellationToken) {
-      return false;
-    }
+    if (!existing) return false;
+    // Registros antigos, criados antes do código privado, podem ser removidos pelo nome.
+    // Registros novos continuam protegidos pelo código salvo no navegador de quem confirmou.
+    if (existing.cancellationToken && existing.cancellationToken !== args.cancellationToken) return false;
 
     await ctx.db.delete(existing._id);
     return true;
