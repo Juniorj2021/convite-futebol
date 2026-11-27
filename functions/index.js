@@ -257,6 +257,19 @@ main{min-height:calc(100svh - 48px);display:flex;flex-direction:column}
   .details{gap:5px;margin-bottom:5px}
   .detail{min-height:40px;padding:5px 8px}
 }
+
+/* Confirmação personalizada para exclusão de jogador */
+.remove-confirm-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:#020b18d9;backdrop-filter:blur(5px)}
+.remove-confirm-card{width:min(100%,390px);padding:25px 22px 20px;border:1px solid #7890aa;border-radius:20px;background:linear-gradient(155deg,#17385e,#0b1f39);box-shadow:0 24px 70px #000b;text-align:center;color:#fff}
+.remove-confirm-icon{width:54px;height:54px;margin:0 auto 14px;display:grid;place-items:center;border-radius:16px;background:#ffb4a81c;border:1px solid #ffb4a855;font-size:27px}
+.remove-confirm-card h3{margin:0 0 9px;font-size:21px;font-weight:900}
+.remove-confirm-card p{margin:0;color:#d7e6f6;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.remove-confirm-name{display:block;margin:8px 0 0;color:#b8f34a;font-weight:900}
+.remove-confirm-actions{display:flex;gap:10px;margin-top:22px}
+.remove-confirm-actions button{flex:1;width:auto;margin:0;padding:13px 10px;border-radius:10px;font-size:13px}
+.remove-confirm-keep{background:#ffffff16;color:#fff;border:1px solid #7890aa}
+.remove-confirm-delete{background:#d95b55;color:#fff;border:1px solid #ffb4a8}
+
 </style></head><body><main>
 <section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">${esc(event.label)}</span><h1>FUTEBOL</h1><p class="weekly-schedule">QUINTA ÀS 19H&nbsp; • &nbsp;SÁBADO ÀS 6H</p></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
@@ -432,8 +445,54 @@ function normalizeName(name) {
 function cancellationKey(name, eventDate) {
   return "futebol-cancel:" + eventDate + ":" + normalizeName(name);
 }
+
+function confirmPlayerRemoval(playerName) {
+  return new Promise(resolve => {
+    const overlay = document.createElement("div");
+    overlay.className = "remove-confirm-overlay";
+    const dialog = document.createElement("section");
+    dialog.className = "remove-confirm-card";
+    dialog.setAttribute("role", "alertdialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-labelledby", "remove-confirm-title");
+    const icon = document.createElement("div");
+    icon.className = "remove-confirm-icon";
+    icon.textContent = "⚠️";
+    const title = document.createElement("h3");
+    title.id = "remove-confirm-title";
+    title.textContent = "Excluir jogador?";
+    const message = document.createElement("p");
+    message.append("Tem certeza de que deseja retirar este jogador da lista de confirmados?");
+    const name = document.createElement("span");
+    name.className = "remove-confirm-name";
+    name.textContent = playerName;
+    message.appendChild(name);
+    const actions = document.createElement("div");
+    actions.className = "remove-confirm-actions";
+    const keep = document.createElement("button");
+    keep.type = "button";
+    keep.className = "remove-confirm-keep";
+    keep.textContent = "MANTER NA LISTA";
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "remove-confirm-delete";
+    remove.textContent = "SIM, EXCLUIR";
+    actions.append(keep, remove);
+    dialog.append(icon, title, message, actions);
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    const finish = value => { overlay.remove(); document.removeEventListener("keydown", onKey); resolve(value); };
+    const onKey = event => { if(event.key === "Escape") finish(false); };
+    keep.addEventListener("click", () => finish(false));
+    remove.addEventListener("click", () => finish(true));
+    overlay.addEventListener("click", event => { if(event.target === overlay) finish(false); });
+    document.addEventListener("keydown", onKey);
+    keep.focus();
+  });
+}
+
 async function cancelParticipation(name, eventDate, key, cancelButton) {
-  if (!confirm("Deseja retirar sua confirmação de presença?")) return;
+  if (!(await confirmPlayerRemoval(name))) return;
   cancelButton.disabled = true;
   cancelStatus.textContent = "Cancelando sua participação...";
   status.textContent = "";
