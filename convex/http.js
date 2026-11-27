@@ -28,7 +28,7 @@ function normalizeName(name) {
 http.route({
   path: "/horario",
   method: "GET",
-  handler: httpAction(async (ctx) => {
+  handler: httpAction(async (ctx, request) => {
     const eventDate = new URL(request.url).searchParams.get("eventDate");
     if (!validDate(eventDate)) return json({ error: "Data do evento inválida." }, 400);
     const time = await ctx.runQuery(internal.horario.get, { eventDate });
@@ -43,8 +43,9 @@ http.route({
     let body;
     try { body = await request.json(); } catch { return json({ error: "Informe um horário válido." }, 400); }
     const time = String(body?.time || "");
-    if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)) return json({ error: "Horário inválido." }, 400);
-    await ctx.runMutation(internal.horario.set, { time });
+    const eventDate = body?.eventDate;
+    if (!validDate(eventDate) || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)) return json({ error: "Horário ou data inválidos." }, 400);
+    await ctx.runMutation(internal.horario.set, { time, eventDate });
     return json({ ok: true, time });
   }),
 });
