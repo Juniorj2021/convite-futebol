@@ -194,6 +194,16 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .status{min-height:16px;margin-top:6px}
   .foot{margin-top:9px}
 }
+
+/* Rodapé fixado no final do painel em telas grandes e celulares */
+main{min-height:calc(100svh - 48px);display:flex;flex-direction:column}
+.content{flex:1;display:flex;flex-direction:column}
+.foot{margin-top:auto;padding-top:22px;padding-bottom:2px}
+@media(max-width:600px){
+  main{min-height:100svh}
+  .content{flex:1}
+  .foot{padding-top:20px;padding-bottom:5px}
+}
 </style></head><body><main>
 <section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">${esc(event.label)}</span><h1>FUTEBOL</h1><p class="weekly-schedule">QUINTA ÀS 19H&nbsp; • &nbsp;SÁBADO ÀS 6H</p></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
