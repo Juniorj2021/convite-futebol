@@ -103,6 +103,42 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .participant-row{padding:8px;gap:6px}
   .cancel-button{padding:8px;font-size:11px}
 }
+
+/* Correções de encaixe no celular: evita transbordamento do lápis e reduz a altura do painel */
+.detail-value{flex:1 1 auto;min-width:0}
+.detail-value>span:first-child{min-width:0;overflow-wrap:anywhere}
+.edit-time{flex:0 0 25px}
+@media (max-width:600px){
+  .detail-value{white-space:normal}
+  .detail-value>span:first-child{flex:1 1 auto;line-height:1.2}
+  .edit-time{flex:0 0 23px;min-width:23px;width:23px;height:23px}
+  .hero{min-height:clamp(112px,17svh,145px);padding:15px}
+  .content{padding:11px 16px}
+  .date{font-size:15px;margin:0 0 9px}
+  .details{gap:8px;margin-bottom:9px}
+  .detail{min-height:50px;padding:7px 7px;gap:5px}
+  .detail .time-line{gap:3px}
+  .detail strong{font-size:9px}
+  .detail-value{font-size:clamp(10px,2.9vw,13px);gap:3px}
+  .symbol{width:26px;height:26px;flex:0 0 26px;font-size:14px}
+  .event-status{padding:7px 9px;margin-bottom:9px;font-size:12px}
+  .notice{padding:9px 11px;margin:9px 0 11px;font-size:12px;line-height:1.35}
+  .participants{padding:8px 10px;margin-bottom:10px}
+  .participants-toggle{padding:8px 10px;font-size:11px}
+  .form-title{font-size:16px;margin-bottom:7px}
+  .name-input{padding:10px;font-size:15px}
+  #submit-button{padding:10px 12px;margin-top:7px}
+  .status{min-height:15px;margin-top:5px;font-size:12px}
+  .foot{margin-top:7px;font-size:10px}
+}
+@media (max-width:600px) and (max-height:720px){
+  .hero{min-height:105px}
+  .content{padding-top:9px;padding-bottom:8px}
+  .date{margin-bottom:7px}
+  .notice{margin-top:7px;margin-bottom:8px}
+  .participants{margin-bottom:8px}
+  .foot{margin-top:5px}
+}
 @media (max-width:600px) and (orientation:landscape){
   body{padding:10px}
   .hero{min-height:160px}
