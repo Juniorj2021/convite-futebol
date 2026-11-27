@@ -472,5 +472,5 @@ loadParticipants();
 loadSchedule();
 loadLocation();
 </script></body></html>`;
-  return new Response(html, { headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "public, max-age=60, s-maxage=300", "X-Content-Type-Options": "nosniff" } });
+  return new Response(html, { headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
 }
