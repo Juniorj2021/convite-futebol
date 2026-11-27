@@ -21,7 +21,7 @@ function json(data, status = 200) {
 }
 
 export async function onRequest(context) {
-  const { request, env } = context;
+  const { request } = context;
   const eventDate = eventDateKey();
   const baseUrl = "https://grand-roadrunner-255.convex.site";
   const endpoint = `${baseUrl}/confirmacoes`;
@@ -35,20 +35,22 @@ export async function onRequest(context) {
       return json(data, response.status);
     }
 
-    if (request.method === "POST") {
+    if (request.method === "POST" || request.method === "DELETE") {
       let body;
       try { body = await request.json(); } catch {
-        return json({ error: "Envie um nome válido." }, 400);
+        return json({ error: "Envie dados válidos." }, 400);
       }
+
       const name = String(body?.name || "").trim().replace(/\s+/g, " ");
       if (name.length < 2 || name.length > 70) {
         return json({ error: "Informe seu nome (de 2 a 70 caracteres)." }, 400);
       }
 
+      const payload = { ...body, eventDate, name };
       const response = await fetch(endpoint, {
-        method: "POST",
+        method: request.method,
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ eventDate, name }),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
       return json(data, response.status);
