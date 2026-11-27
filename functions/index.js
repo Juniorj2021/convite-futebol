@@ -37,19 +37,19 @@ main{width:min(100%,620px);overflow:hidden;border-radius:22px;background:#102b4d
 .tag{display:inline-block;background:#b8f34a;color:#102b13;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:8px 12px;border-radius:30px;margin-bottom:12px}
 h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;letter-spacing:-1.5px}
 .content{padding:28px}.date{color:#b8f34a;font-weight:800;font-size:18px;text-transform:capitalize;margin:0 0 22px}
-.details{display:grid;gap:14px;margin-bottom:24px}.detail{display:flex;gap:12px;align-items:center;font-size:17px}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
+.details{display:grid;gap:14px;margin-bottom:24px}.detail{display:flex;gap:12px;align-items:center;font-size:17px}.time-line{display:flex;align-items:center;gap:8px}.edit-time{width:30px;height:30px;margin:0;padding:0;border:1px solid #7890aa;border-radius:8px;background:#ffffff16;color:#b8f34a;font-size:16px;line-height:1}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
 .notice{border-left:4px solid #b8f34a;background:#ffffff0d;padding:15px 16px;border-radius:0 12px 12px 0;line-height:1.5;margin:22px 0 26px}
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
 .participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}
-.schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor summary{cursor:pointer;color:#b8f34a;font-weight:800}.schedule-controls{display:flex;gap:8px;align-items:center;margin-top:12px}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
+.schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 </style></head><body><main>
 <section class="hero"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
-<div class="details"><div class="detail"><span class="symbol">⏰</span><span><strong>Horário:</strong> <span id="event-time">06:00</span></span></div>
+<div class="details"><div class="detail"><span class="symbol">⏰</span><span class="time-line"><span><strong>Horário:</strong> <span id="event-time">06:00</span></span><button class="edit-time" id="edit-time" type="button" aria-label="Editar horário" title="Editar horário">✎</button></span></div>
 <div class="detail"><span class="symbol">📍</span><span><strong>Local:</strong> Campo do Corujão</span></div></div>
-<details class="schedule-editor"><summary>Alterar horário do futebol</summary><div class="schedule-controls"><input id="schedule-input" type="text" inputmode="numeric" maxlength="5" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" value="06:00" aria-label="Novo horário no formato 24 horas"><button id="schedule-save" type="button">SALVAR HORÁRIO</button></div><p class="schedule-status" id="schedule-status" role="status"></p></details>
+<section class="schedule-editor" id="schedule-editor" hidden><p class="schedule-title">Editar horário</p><div class="schedule-controls"><input id="schedule-input" type="text" inputmode="numeric" maxlength="5" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" value="06:00" aria-label="Novo horário no formato 24 horas"><button id="schedule-save" type="button">SALVAR</button></div><p class="schedule-status" id="schedule-status" role="status"></p></section>
 <div class="notice"><strong>ATENÇÃO!</strong><br>Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
 <section class="participants" aria-live="polite">
 <p class="count" id="participant-count">Carregando confirmações...</p>
@@ -63,7 +63,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 </div>
 <form id="confirm-form">
 <h2 class="form-title">Confirme sua participação</h2>
-<label for="participant-name">Seu nome completo</label>
+<label for="participant-name">Seu nome</label>
 <input class="name-input" id="participant-name" name="name" type="text" minlength="2" maxlength="70" autocomplete="name" placeholder="Digite seu nome" required>
 <button id="submit-button" type="submit">CONFIRMAR MINHA PARTICIPAÇÃO</button>
 <p class="status" id="form-status" role="status" aria-live="polite"></p>
@@ -80,6 +80,8 @@ const participantsToggle = document.getElementById("participants-toggle");
 const participantsScreen = document.getElementById("participants-screen");
 const participantsClose = document.getElementById("participants-close");
 const eventTime = document.getElementById("event-time");
+const scheduleEditor = document.getElementById("schedule-editor");
+const editTime = document.getElementById("edit-time");
 const scheduleInput = document.getElementById("schedule-input");
 const scheduleSave = document.getElementById("schedule-save");
 const scheduleStatus = document.getElementById("schedule-status");
@@ -99,6 +101,12 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape" && !participantsScreen.hidden) closeParticipants();
 });
 
+editTime.addEventListener("click", () => {
+  scheduleInput.value = eventTime.textContent;
+  scheduleStatus.textContent = "";
+  scheduleEditor.hidden = false;
+  scheduleInput.focus();
+});
 async function loadSchedule() {
   try {
     const response = await fetch("/api/horario", { cache: "no-store" });
@@ -125,7 +133,8 @@ scheduleSave.addEventListener("click", async () => {
     if (!response.ok) throw new Error(data.error || "Não foi possível salvar.");
     eventTime.textContent = data.time;
     scheduleInput.value = data.time;
-    scheduleStatus.textContent = "Horário atualizado para todos os participantes!";
+    scheduleEditor.hidden = true;
+    scheduleStatus.textContent = "";
   } catch (error) { scheduleStatus.textContent = error.message; }
   finally { scheduleSave.disabled = false; }
 });
