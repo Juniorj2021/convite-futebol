@@ -25,3 +25,5 @@ jobs:
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: npx convex deploy
+
+# Reexecute deployment after repository secret configuration.
