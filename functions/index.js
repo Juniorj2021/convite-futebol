@@ -204,6 +204,31 @@ main{min-height:calc(100svh - 48px);display:flex;flex-direction:column}
   .content{flex:1}
   .foot{padding-top:20px;padding-bottom:5px}
 }
+
+/* Encaixe compacto no desktop: mantém o aviso de confirmação sem criar rolagem */
+@media (min-width:601px) and (max-height:900px){
+  body{min-height:100svh;padding:0}
+  main{height:100svh;min-height:0}
+  .hero{min-height:145px;padding:16px 22px}
+  .tag{margin-bottom:7px;padding:6px 10px}
+  h1{font-size:42px}
+  .weekly-schedule{margin-top:6px}
+  .content{padding:9px 20px 7px}
+  .date{font-size:15px;margin:0 0 6px}
+  .details{gap:7px;margin-bottom:7px}
+  .detail{min-height:44px;padding:6px 9px}
+  .symbol{width:30px;height:30px;border-radius:9px;font-size:16px}
+  .event-status{font-size:11px;padding:5px 8px;margin:0 0 7px}
+  .notice{font-size:12px;line-height:1.25;padding:7px 10px;margin:7px 0 8px}
+  .participants{padding:7px 10px;margin-bottom:8px}
+  .count{font-size:13px}
+  .participants-toggle{padding:8px 11px;font-size:11px}
+  .form-title{font-size:16px;margin:0 0 6px}
+  .name-input{font-size:15px;padding:9px 12px}
+  #submit-button{font-size:13px;padding:9px 12px;margin-top:6px}
+  .status{font-size:11px;min-height:13px;margin-top:4px}
+  .foot{font-size:10px;padding-top:8px;padding-bottom:0}
+}
 </style></head><body><main>
 <section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">${esc(event.label)}</span><h1>FUTEBOL</h1><p class="weekly-schedule">QUINTA ÀS 19H&nbsp; • &nbsp;SÁBADO ÀS 6H</p></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
