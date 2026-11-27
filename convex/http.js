@@ -1,3 +1,4 @@
+// HTTP endpoints do Convite Futebol; deploy acionado para sincronizar as rotas.
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
