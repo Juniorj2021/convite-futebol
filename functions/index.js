@@ -21,7 +21,7 @@ function nextEvent() {
     // Mantém o evento atual selecionado durante as 5 horas em que a lista continua aberta.
     if (offset === 0 && nowMinutes >= schedule.minutes + 300) continue;
     const eventDate = candidate.toISOString().slice(0, 10);
-    const label = offset === 0 ? "JOGO DE HOJE" : "PRÓXIMO JOGO";
+    const label = offset === 0 ? "JOGO DE HOJE" : offset === 1 ? "É AMANHÃ" : "PRÓXIMO JOGO";
     const date = new Intl.DateTimeFormat("pt-BR", {
       timeZone: "UTC", weekday: "long", day: "2-digit", month: "long", year: "numeric"
     }).format(candidate);
