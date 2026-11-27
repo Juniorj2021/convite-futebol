@@ -44,6 +44,29 @@ button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;c
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
 .participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}.cancel-status{min-height:18px;color:#ffd2ca;font-size:13px;margin:12px 0 0}
 .schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
+
+/* Refinamento visual: painel principal e lista de participantes */
+.details{gap:14px;margin-bottom:16px}
+.detail{padding:12px;background:linear-gradient(135deg,#ffffff12,#ffffff08);border:1px solid #ffffff20;border-radius:14px;min-height:66px}
+.detail .time-line{gap:6px}
+.detail strong{color:#b8c8d9;font-size:12px;letter-spacing:.35px;text-transform:uppercase}
+.detail-value{font-weight:800;color:#fff}
+.symbol{background:#b8f34a1c;color:#b8f34a;border:1px solid #b8f34a35}
+.event-status{box-shadow:inset 0 1px #ffffff0c}
+.participants{background:linear-gradient(135deg,#17385e,#0b2340);border:1px solid #ffffff30;box-shadow:0 8px 20px #0002}
+.count{font-size:15px;letter-spacing:.1px}
+.participants-toggle{font-weight:800;letter-spacing:.35px;transition:background .15s ease,border-color .15s ease}
+.participants-toggle:hover{background:#ffffff25;border-color:#b8f34a}
+.participants-panel{background:linear-gradient(160deg,#15385f,#102b4d 55%);border-color:#ffffff35}
+.participants-panel h2{font-weight:900;letter-spacing:-.35px}
+.names{gap:9px;padding-left:30px}
+.names li{padding-left:5px}
+.names li::marker{color:#b8f34a;font-weight:900}
+.participant-row{min-height:48px;padding:10px 12px;background:#ffffff12;border:1px solid #ffffff12;border-radius:11px;transition:background .15s ease}
+.participant-row:hover{background:#ffffff19}
+.person-name{font-weight:700;line-height:1.3}
+.cancel-button{font-weight:800;letter-spacing:.15px;transition:background .15s ease,border-color .15s ease}
+.cancel-button:hover{background:#ffb4a81a;border-color:#ffd2ca}
 @media (max-width:600px){
   body{padding:0;place-items:start center;min-height:100svh}
   .details{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 12px}.detail{min-width:0;gap:6px}.detail .time-line{min-width:0}.detail-value{white-space:nowrap;font-size:clamp(11px,3.1vw,14px);gap:3px}.symbol{width:29px;height:29px;flex:0 0 29px}.edit-time{flex:0 0 25px;min-width:25px;width:25px;height:25px}
@@ -52,8 +75,11 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .hero{min-height:clamp(135px,21svh,175px);padding:18px}
   .content{padding:16px 18px}
   .date{font-size:16px;margin:0 0 13px}
-  .detail{font-size:clamp(13px,3.5vw,15px);align-items:center;gap:8px}.detail .time-line{gap:5px;flex-wrap:nowrap}.detail strong{white-space:normal}.detail-value{gap:4px}.edit-time{flex:0 0 27px;min-width:27px;width:27px}
-  .symbol{width:31px;height:31px;border-radius:9px;font-size:16px}.edit-time{width:27px;height:27px;font-size:14px}.event-status{font-size:13px;padding:9px 11px;margin:0 0 13px}
+  .details{gap:9px;margin-bottom:12px}
+  .detail{font-size:clamp(13px,3.5vw,15px);align-items:center;gap:7px;padding:9px 8px;min-height:58px}.detail .time-line{gap:4px;flex-wrap:nowrap}.detail strong{font-size:10px;white-space:normal}.detail-value{gap:3px;font-size:clamp(11px,3.1vw,14px)}.edit-time{flex:0 0 25px;min-width:25px;width:25px}
+  .symbol{width:29px;height:29px;border-radius:9px;font-size:15px;flex:0 0 29px}.edit-time{width:25px;height:25px;font-size:13px}.event-status{font-size:13px;padding:9px 11px;margin:0 0 13px}
+  .count{font-size:13px}
+  .participant-row{min-height:45px;padding:9px 10px}
   .notice{padding:12px 14px;margin:13px 0 16px;font-size:13px;line-height:1.45}.participants{align-items:center;padding:10px 12px;gap:10px;margin:0 0 14px}
   .count{font-size:13px;line-height:1.35}
   .participants-toggle{padding:9px 11px;font-size:12px}.form-title{font-size:18px;margin:0 0 9px}.name-input{font-size:16px;padding:13px}button{font-size:14px;padding:13px 14px;margin-top:10px}.status{font-size:13px;min-height:18px;margin:8px 0 0}.foot{font-size:11px;margin-top:12px}
@@ -72,9 +98,9 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .participants{flex-wrap:nowrap}
   .count{flex:1 1 auto}
   .participants-toggle{width:auto}
-  .detail{gap:6px}
-  .edit-time{flex:0 0 25px;min-width:25px;width:25px;height:25px}
-  .participant-row{padding:9px;gap:6px}
+  .detail{gap:5px;padding:8px 6px}
+  .edit-time{flex:0 0 23px;min-width:23px;width:23px;height:23px}
+  .participant-row{padding:8px;gap:6px}
   .cancel-button{padding:8px;font-size:11px}
 }
 @media (max-width:600px) and (orientation:landscape){
