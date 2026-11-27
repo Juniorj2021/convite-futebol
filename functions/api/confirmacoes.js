@@ -23,7 +23,7 @@ function json(data, status = 200) {
 export async function onRequest(context) {
   const { request } = context;
   const eventDate = eventDateKey();
-  const baseUrl = "https://grand-roadrunner-255.convex.site";
+  const baseUrl = "https://reminiscent-oyster-516.convex.site";
   const endpoint = `${baseUrl}/confirmacoes`;
 
   try {
