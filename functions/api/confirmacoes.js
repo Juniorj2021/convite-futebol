@@ -1,14 +1,28 @@
 function eventDateKey() {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit"
+  const zone = "America/Sao_Paulo";
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23"
   }).formatToParts(new Date());
   const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
-  const d = new Date(Date.UTC(+p.year, +p.month - 1, +p.day + 1, 12));
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "UTC", year: "numeric", month: "2-digit", day: "2-digit"
-  }).format(d);
+  const today = new Date(Date.UTC(+p.year, +p.month - 1, +p.day));
+  const nowMinutes = Number(p.hour) * 60 + Number(p.minute);
+  const schedules = [{ day: 4, minutes: 19 * 60, time: "19:00" }, { day: 6, minutes: 6 * 60, time: "06:00" }];
+  for (let offset = 0; offset <= 7; offset++) {
+    const candidate = new Date(today);
+    candidate.setUTCDate(candidate.getUTCDate() + offset);
+    const schedule = schedules.find(item => item.day === candidate.getUTCDay());
+    if (!schedule) continue;
+    if (offset === 0 && nowMinutes > schedule.minutes) continue;
+    const eventDate = candidate.toISOString().slice(0, 10);
+    const label = offset === 0 ? "É HOJE!" : offset === 1 ? "É AMANHÃ!" : "PRÓXIMO FUTEBOL";
+    const date = new Intl.DateTimeFormat("pt-BR", {
+      timeZone: "UTC", weekday: "long", day: "2-digit", month: "long", year: "numeric"
+    }).format(candidate);
+    return eventDate;
+  }
+  throw new Error("Não foi possível calcular o próximo futebol.");
 }
-
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
