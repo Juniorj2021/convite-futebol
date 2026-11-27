@@ -5,7 +5,9 @@ export async function onRequest(context) {
   const baseUrl = "https://grand-roadrunner-255.convex.site";
   try {
     if (context.request.method === "GET") {
-      const response = await fetch(baseUrl + "/horario", { headers: { "Accept": "application/json" } });
+      const eventDate = new URL(context.request.url).searchParams.get("eventDate");
+      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(eventDate || "")) return json({ error: "Data do evento inválida." }, 400);
+      const response = await fetch(baseUrl + "/horario?eventDate=" + encodeURIComponent(eventDate), { headers: { "Accept": "application/json" } });
       return json(await response.json(), response.status);
     }
     if (context.request.method === "POST") {
