@@ -1,33 +1,49 @@
 const OG_IMAGE = "https://alquilatucancha-public.s3.sa-east-1.amazonaws.com/production/public/clubs/bg/bg_default.jpeg";
 
-function tomorrowDate() {
+function nextEvent() {
+  const zone = "America/Sao_Paulo";
   const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/Sao_Paulo", year: "numeric", month: "numeric", day: "numeric"
+    timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23"
   }).formatToParts(new Date());
   const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
-  const d = new Date(Date.UTC(+p.year, +p.month - 1, +p.day + 1, 12));
-  return new Intl.DateTimeFormat("pt-BR", {
-    timeZone: "UTC", weekday: "long", day: "2-digit", month: "long", year: "numeric"
-  }).format(d);
+  const today = new Date(Date.UTC(+p.year, +p.month - 1, +p.day));
+  const nowMinutes = Number(p.hour) * 60 + Number(p.minute);
+  const schedules = [{ day: 4, minutes: 19 * 60, time: "19:00" }, { day: 6, minutes: 6 * 60, time: "06:00" }];
+  for (let offset = 0; offset <= 7; offset++) {
+    const candidate = new Date(today);
+    candidate.setUTCDate(candidate.getUTCDate() + offset);
+    const schedule = schedules.find(item => item.day === candidate.getUTCDay());
+    if (!schedule) continue;
+    if (offset === 0 && nowMinutes > schedule.minutes) continue;
+    const eventDate = candidate.toISOString().slice(0, 10);
+    const label = offset === 0 ? "É HOJE!" : offset === 1 ? "É AMANHÃ!" : "PRÓXIMO FUTEBOL";
+    const date = new Intl.DateTimeFormat("pt-BR", {
+      timeZone: "UTC", weekday: "long", day: "2-digit", month: "long", year: "numeric"
+    }).format(candidate);
+    return { eventDate, time: schedule.time, label, date };
+  }
+  throw new Error("Não foi possível calcular o próximo futebol.");
 }
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 export async function onRequest(context) {
-  const date = tomorrowDate();
-  const desc = `Amanhã, ${date}, no Campo do Corujão. Obrigatório o uso do colete ou de camisas nas cores do colete.`;
+  const event = nextEvent();
+  const date = event.date;
+  const desc = `${event.label} ${date}, às ${event.time}, no Campo do Corujão. Futebol oficial: quinta à noite e sábado pela manhã. Obrigatório o uso do colete ou de camisas nas cores do colete.`;
   const canonical = new URL(context.request.url).origin + "/";
   const html = `<!doctype html>
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2"><link rel="icon" type="image/png" sizes="180x180" href="/apple-touch-icon.png?v=5"><meta name="theme-color" content="#071a33"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Futebol">
-<title>FUTEBOL AMANHÃ | Campo do Corujão</title><meta name="description" content="${esc(desc)}">
+<title>PRÓXIMO FUTEBOL | Campo do Corujão</title><meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${esc(canonical)}">
 <meta property="og:type" content="website"><meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Futebol no Campo do Corujão">
-<meta property="og:title" content="FUTEBOL AMANHÃ"><meta property="og:description" content="${esc(desc)}">
+<meta property="og:title" content="PRÓXIMO FUTEBOL"><meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${OG_IMAGE}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1000"><meta property="og:image:height" content="667"><meta property="og:image:alt" content="Campo de futebol com gramado verde e arquibancadas">
 <meta property="og:url" content="${esc(canonical)}">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="FUTEBOL AMANHÃ">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="PRÓXIMO FUTEBOL">
 <meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${OG_IMAGE}">
 <meta name="theme-color" content="#071a33">
 <style>
@@ -159,9 +175,9 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .person-name{font-size:14px}
 }
 </style></head><body><main>
-<section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL</h1></div></section>
+<section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">${esc(event.label)}</span><h1>FUTEBOL</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
-<div class="details"><div class="detail"><span class="symbol">⏰</span><span class="time-line"><strong>Horário:</strong><span class="detail-value"><span id="event-time">06:00</span><button class="edit-time" id="edit-time" type="button" aria-label="Editar horário" title="Editar horário">✎</button></span></span></div>
+<div class="details"><div class="detail"><span class="symbol">⏰</span><span class="time-line"><strong>Horário:</strong><span class="detail-value"><span id="event-time">${esc(event.time)}</span><button class="edit-time" id="edit-time" type="button" aria-label="Editar horário" title="Editar horário">✎</button></span></span></div>
 <div class="detail"><span class="symbol">📍</span><span class="time-line"><strong>Local:</strong><span class="detail-value"><span id="event-location">Campo do Corujão</span><button class="edit-time" id="edit-location" type="button" aria-label="Editar local" title="Editar local">✎</button></span></span></div></div>
 <p class="event-status" id="event-status" role="status" aria-live="polite" hidden></p>
 <section class="schedule-editor" id="location-editor" hidden><p class="schedule-title">Editar local</p><div class="schedule-controls"><input id="location-input" type="text" maxlength="100" placeholder="Informe o local" aria-label="Novo local"><button id="location-save" type="button">SALVAR</button></div><p class="schedule-status" id="location-status" role="status"></p></section>
@@ -185,6 +201,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 </form>
 <p class="foot">Sua confirmação ficará visível para os demais participantes.</p></section></main>
 <script>
+window.NEXT_EVENT_DATE = "${event.eventDate}";
 const form = document.getElementById("confirm-form");
 const input = document.getElementById("participant-name");
 const button = document.getElementById("submit-button");
@@ -293,7 +310,7 @@ editTime.addEventListener("click", () => {
 });
 async function loadSchedule() {
   try {
-    const response = await fetch("/api/horario", { cache: "no-store" });
+    const response = await fetch("/api/horario?eventDate=" + encodeURIComponent(window.NEXT_EVENT_DATE), { cache: "no-store" });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível carregar o horário.");
     eventTime.textContent = data.time;
@@ -311,7 +328,7 @@ scheduleSave.addEventListener("click", async () => {
   try {
     const response = await fetch("/api/horario", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ time })
+      body: JSON.stringify({ time, eventDate: window.NEXT_EVENT_DATE })
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível salvar.");
