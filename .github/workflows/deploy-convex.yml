@@ -25,7 +25,7 @@ jobs:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
         run: |
           if [ -n "$VAPID_PRIVATE_KEY" ]; then
-            npx convex env set --prod VAPID_PUBLIC_KEY "BJoCs45XKiJk9UpIMQl0TYloUh-own_uOdR9VaMGc6672N2ruiv2zpYZhZRQHJ3ejF3pJlPGadJnSwyGxoAW8I4"
+            npx convex env set --prod VAPID_PUBLIC_KEY "BJoCs45XKiJk9UpIMQl0TYloUh-own_uOdR9VaMGc6672N2ruiv6zpYZhZRQHJ3ejF3pJlPGadJnSwyGxoAW8I4"
             npx convex env set --prod VAPID_PRIVATE_KEY "$VAPID_PRIVATE_KEY"
           else
             echo "Web Push private key not configured yet; backend will deploy, but notifications remain inactive."
