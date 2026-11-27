@@ -61,7 +61,7 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     let body;
     try { body = await request.json(); } catch { return json({ error: "Informe um local válido." }, 400); }
-    const location = String(body?.location || "").trim().replace(/\\s+/g, " ");
+    const location = String(body?.location || "").trim().replace(/\s+/g, " ");
     if (location.length < 2 || location.length > 100) return json({ error: "O local deve ter entre 2 e 100 caracteres." }, 400);
     await ctx.runMutation(internal.local.set, { location });
     return json({ ok: true, location });
