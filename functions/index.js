@@ -96,7 +96,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 </section>
 <div class="participants-screen" id="participants-screen" hidden>
 <div class="participants-panel" role="dialog" aria-modal="true" aria-labelledby="participants-title">
-<div class="participants-header"><h2 id="participants-title">Participantes confirmados</h2><button class="participants-close" id="participants-close" type="button">FECHAR ✕</button></div>
+<div class="participants-header"><h2 id="participants-title">Participantes confirmados</h2><button class="participants-close" id="participants-close" type="button" aria-label="Fechar">✕</button></div>
 <ol class="names" id="participant-list"></ol><p class="cancel-status" id="cancel-status" role="status" aria-live="polite"></p>
 </div>
 </div>
