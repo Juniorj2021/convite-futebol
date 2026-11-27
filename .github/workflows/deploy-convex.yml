@@ -1,5 +1,5 @@
 name: Deploy Convex backend
-# Fresh production-key validation run
+
 on:
   push:
     branches: [main]
@@ -8,58 +8,58 @@ on:
       - "package.json"
       - ".github/workflows/deploy-convex.yml"
   workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Install dependencies
         run: npm install
-      - name: Validate Production deploy key format without exposing it
+
+      - name: Create temporary production deploy key and deploy
         env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_ENV_DEPLOY_KEY }}
-        run: |
-          if [ -z "$CONVEX_DEPLOY_KEY" ]; then
-            echo "Production deploy key is empty or unavailable to this workflow."
-            exit 1
-          fi
-          KEY_META="${CONVEX_DEPLOY_KEY%%|*}"
-          echo "Safe key metadata received by workflow: $KEY_META"
-          case "$CONVEX_DEPLOY_KEY" in
-            prod:reminiscent-oyster-516\|*) ;;
-            *)
-              echo "Production key metadata does not match the expected deployment."
-              exit 1
-              ;;
-          esac
-          KEY_PAYLOAD="${CONVEX_DEPLOY_KEY#*|}"
-          if [ -z "$KEY_PAYLOAD" ]; then
-            echo "Production key payload after separator is empty."
-            exit 1
-          fi
-          if printf '%s' "$CONVEX_DEPLOY_KEY" | grep -q '[[:space:]]'; then
-            echo "Production key contains whitespace."
-            exit 1
-          fi
-          echo "Production key format passed. Payload length: ${#KEY_PAYLOAD} characters. Secret value not displayed."
-      - name: Configure Web Push keys in Convex Production when a production env key is available
-        continue-on-error: true
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_ENV_DEPLOY_KEY }}
+          CONVEX_PERSONAL_ACCESS_TOKEN: ${{ secrets.CONVEX_PERSONAL_ACCESS_TOKEN }}
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
         run: |
-          if [ -n "$VAPID_PRIVATE_KEY" ]; then
-            npx convex env set --prod VAPID_PUBLIC_KEY "BJoCs45XKiJk9UpIMQl0TYloUh-own_uOdR9VaMGc6672N2ruiv6zpYZhZRQHJ3ejF3pJlPGadJnSwyGxoAW8I4"
-            npx convex env set --prod VAPID_PRIVATE_KEY "$VAPID_PRIVATE_KEY"
-          else
-            echo "VAPID_PRIVATE_KEY secret is not configured."
+          set -euo pipefail
+
+          if [ -z "$CONVEX_PERSONAL_ACCESS_TOKEN" ]; then
+            echo "Personal access token is missing."
+            exit 1
           fi
-      - name: Deploy to Convex Production
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_ENV_DEPLOY_KEY }}
-        run: npx convex deploy
+
+          EXPIRES_AT=$(( $(date +%s) * 1000 + 7200000 ))
+
+          RESPONSE=$(curl --fail --silent --show-error \
+            -X POST \
+            "https://api.convex.dev/v1/deployments/reminiscent-oyster-516/create_deploy_key" \
+            -H "Authorization: Bearer $CONVEX_PERSONAL_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "{\"name\":\"github-actions-${GITHUB_RUN_ID}\",\"allowedActions\":[\"deployment:deploy\",\"deployment:env:write\"],\"expiresAt\":$EXPIRES_AT}")
+
+          CONVEX_DEPLOY_KEY=$(printf '%s' "$RESPONSE" | jq -er '.deployKey')
+
+          echo "::add-mask::$CONVEX_DEPLOY_KEY"
+          export CONVEX_DEPLOY_KEY
+
+          echo "Temporary production key created successfully."
+
+          if [ -z "$VAPID_PRIVATE_KEY" ]; then
+            echo "VAPID_PRIVATE_KEY is missing."
+            exit 1
+          fi
+
+          npx convex env set --prod VAPID_PUBLIC_KEY "BJoCs45XKiJk9UpIMQl0TYloUh-own_uOdR9VaMGc6672N2ruiv6zpYZhZRQHJ3ejF3pJlPGadJnSwyGxoAW8I4"
+          npx convex env set --prod VAPID_PRIVATE_KEY "$VAPID_PRIVATE_KEY"
+
+          npx convex deploy
+
+          echo "Production deployment completed."
