@@ -101,11 +101,19 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape" && !participantsScreen.hidden) closeParticipants();
 });
 
+function maskScheduleTime(value) {
+  const digits = String(value).replace(/\\D/g, "").slice(-4).padStart(4, "0");
+  return digits.slice(0, 2) + ":" + digits.slice(2);
+}
+scheduleInput.addEventListener("input", () => {
+  scheduleInput.value = maskScheduleTime(scheduleInput.value);
+});
 editTime.addEventListener("click", () => {
-  scheduleInput.value = eventTime.textContent;
-  scheduleStatus.textContent = "";
+  scheduleInput.value = "00:00";
+  scheduleStatus.textContent = "Digite os números da direita para a esquerda. Ex.: 1 = 00:01; 1234 = 12:34.";
   scheduleEditor.hidden = false;
   scheduleInput.focus();
+  scheduleInput.select();
 });
 async function loadSchedule() {
   try {
