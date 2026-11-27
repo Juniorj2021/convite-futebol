@@ -21,7 +21,7 @@ jobs:
         run: npm install
       - name: Configure protected Web Push keys when the secret is available
         env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_ENV_DEPLOY_KEY }}
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
         run: |
           if [ -n "$VAPID_PRIVATE_KEY" ]; then
