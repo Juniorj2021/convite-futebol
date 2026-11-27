@@ -42,7 +42,7 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
-.participants{margin-top:28px;padding-top:22px;border-top:1px solid #ffffff26}.participants h2{font-size:20px;margin:0 0 6px}.count{color:#b8f34a;font-weight:800;margin:0 0 14px}.names{list-style:none;margin:0;padding:0;display:grid;gap:8px}.names li{padding:11px 13px;background:#ffffff0d;border-radius:9px;overflow-wrap:anywhere}.empty{color:#c4d2e1;font-size:14px}
+.participants{margin-top:28px;padding-top:22px;border-top:1px solid #ffffff26}.participants h2{font-size:20px;margin:0 0 6px}.count{color:#b8f34a;font-weight:800;margin:0 0 14px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}
 .foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 </style></head><body><main>
 <section class="hero"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
@@ -60,7 +60,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <section class="participants" aria-live="polite">
 <h2>Participantes confirmados</h2>
 <p class="count" id="participant-count">Carregando confirmações...</p>
-<ul class="names" id="participant-list"></ul>
+<ol class="names" id="participant-list"></ol>
 </section>
 <p class="foot">Sua confirmação ficará visível para os demais participantes.</p></section></main>
 <script>
@@ -71,6 +71,34 @@ const status = document.getElementById("form-status");
 const count = document.getElementById("participant-count");
 const list = document.getElementById("participant-list");
 
+function normalizeName(name) {
+  return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
+}
+function cancellationKey(name) {
+  return "futebol-cancel:" + normalizeName(name);
+}
+async function cancelParticipation(name, key, cancelButton) {
+  if (!confirm("Deseja retirar sua confirmação de presença?")) return;
+  cancelButton.disabled = true;
+  status.textContent = "Cancelando sua participação...";
+  try {
+    const cancellationToken = localStorage.getItem(key);
+    if (!cancellationToken) throw new Error("Código de cancelamento não encontrado neste navegador.");
+    const response = await fetch("/api/confirmacoes", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, cancellationToken })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível cancelar.");
+    localStorage.removeItem(key);
+    status.textContent = "Sua confirmação foi retirada.";
+    await loadParticipants();
+  } catch (error) {
+    status.textContent = error.message;
+    cancelButton.disabled = false;
+  }
+}
 function showParticipants(data) {
   list.replaceChildren();
   count.textContent = data.total + (data.total === 1 ? " pessoa confirmou presença" : " pessoas confirmaram presença");
@@ -83,7 +111,26 @@ function showParticipants(data) {
   }
   data.participants.forEach(person => {
     const li = document.createElement("li");
-    li.textContent = person.name;
+    const row = document.createElement("div");
+    row.className = "participant-row";
+    const name = document.createElement("span");
+    name.className = "person-name";
+    name.textContent = person.name;
+    row.appendChild(name);
+
+    const key = cancellationKey(person.name);
+    let token = null;
+    try { token = localStorage.getItem(key); } catch {}
+    if (token) {
+      const cancelButton = document.createElement("button");
+      cancelButton.type = "button";
+      cancelButton.className = "cancel-button";
+      cancelButton.textContent = "Retirar";
+      cancelButton.addEventListener("click", () => cancelParticipation(person.name, key, cancelButton));
+      row.appendChild(cancelButton);
+    }
+
+    li.appendChild(row);
     list.appendChild(li);
   });
 }
@@ -110,7 +157,10 @@ form.addEventListener("submit", async event => {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível confirmar.");
-    status.textContent = "Presença confirmada com sucesso!";
+    try {
+      localStorage.setItem(cancellationKey(data.participant.name), data.cancellationToken);
+    } catch {}
+    status.textContent = "Presença confirmada! Você poderá retirar sua confirmação neste navegador.";
     input.value = "";
     await loadParticipants();
   } catch (error) {
