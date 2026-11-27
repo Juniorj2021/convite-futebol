@@ -152,16 +152,4 @@ http.route({
   }),
 });
 
-// Exclusão pontual solicitada pelo responsável: remove somente o registro "Miro".
-http.route({
-  path: "/remove-miro-once",
-  method: "GET",
-  handler: httpAction(async (ctx, request) => {
-    const eventDate = new URL(request.url).searchParams.get("eventDate");
-    if (!validDate(eventDate)) return json({ error: "Data inválida." }, 400);
-    const removed = await ctx.runMutation(internal.confirmacoes.removeMiroOnce, { eventDate });
-    return json({ ok: true, removed });
-  }),
-});
-
 export default http;
