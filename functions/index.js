@@ -25,7 +25,7 @@ export async function onRequest(context) {
 <meta property="og:type" content="website"><meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Futebol no Campo do Corujão">
 <meta property="og:title" content="FUTEBOL AMANHÃ"><meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${OG_IMAGE}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image" content="${OG_IMAGE}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1000"><meta property="og:image:height" content="667"><meta property="og:image:alt" content="Campo de futebol com gramado verde e arquibancadas">
 <meta property="og:url" content="${esc(canonical)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="FUTEBOL AMANHÃ">
 <meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${OG_IMAGE}">
