@@ -119,18 +119,3 @@ export const removeExpired = internalMutation({
     return removed;
   },
 });
-
-export const removeMiroOnce = internalMutation({
-  args: { eventDate: v.string() },
-  returns: v.number(),
-  handler: async (ctx, args) => {
-    const rows = await ctx.db
-      .query("confirmacoes")
-      .withIndex("by_eventDate_and_normalizedName", (q) =>
-        q.eq("eventDate", args.eventDate).eq("normalizedName", "miro"),
-      )
-      .take(10);
-    for (const row of rows) await ctx.db.delete(row._id);
-    return rows.length;
-  },
-});
