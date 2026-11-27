@@ -2,14 +2,15 @@
 
 Página de confirmação de presença para o futebol no Campo do Corujão.
 
-## Publicação no Cloudflare Pages
+## Publicação
 
-Este repositório agora inclui uma Cloudflare Pages Function em `functions/index.js`, que gera no servidor o HTML e as metatags Open Graph para a prévia do WhatsApp. O diretório de saída está configurado como `public`.
+Este repositório está configurado como **Cloudflare Worker**.
 
-Crie um projeto **Cloudflare Pages** com o nome exato `convitefutebol`, conecte este repositório (`Juniorj2021/convite-futebol`) à branch `main` e configure o diretório de saída como `public`. Não use o comando `npx wrangler deploy`, pois ele publica Workers.
+- Configuração: `wrangler.jsonc`
+- Código: `src/index.js`
+- Nome do Worker: `convitefutebol`
+- Comando: `npx wrangler deploy`
 
-Para implantação manual, use `npx wrangler pages deploy public --project-name convitefutebol`.
+O endereço workers.dev inclui também o subdomínio da conta Cloudflare, no formato `convitefutebol.<subdominio-da-conta>.workers.dev`.
 
-A data de amanhã é calculada no fuso `America/Sao_Paulo`. O botão abre o formulário Google já existente, sem alterar suas respostas ou configurações.
-
-O Worker anterior `convite-futebol.joel-rmjunior.workers.dev` permanece separado; o endereço `convitefutebol.pages.dev` só ficará ativo depois de criar/publicar o projeto Pages com esse nome.
+A data de amanhã é calculada no fuso `America/Sao_Paulo`. O botão abre o formulário Google já existente.
