@@ -408,42 +408,34 @@ function showParticipants(data) {
     list.appendChild(li);
   });
 }
-let realtimeClient = null;
-let realtimeUnsubscribe = null;
-let fallbackRefresh = null;
-async function connectRealtime(eventDate) {
-  try {
-    const [{ ConvexClient }, { makeFunctionReference }] = await Promise.all([
-      import("https://esm.sh/convex/browser"),
-      import("https://esm.sh/convex/server")
-    ]);
-    if (realtimeUnsubscribe) realtimeUnsubscribe();
-    if (realtimeClient) realtimeClient.close();
-    realtimeClient = new ConvexClient("https://grand-roadrunner-255.convex.cloud");
-    const query = makeFunctionReference("confirmacoes:publicListForEvent");
-    realtimeUnsubscribe = realtimeClient.onUpdate(query, { eventDate }, participants => {
-      showParticipants({ eventDate, total: participants.length, participants });
-    }, error => {
-      console.error("Falha na atualização em tempo real:", error);
-      if (!fallbackRefresh) fallbackRefresh = setInterval(loadParticipants, 5000);
-    });
-  } catch (error) {
-    console.error("Não foi possível iniciar atualização em tempo real:", error);
-    if (!fallbackRefresh) fallbackRefresh = setInterval(loadParticipants, 5000);
-  }
-}
+let participantsRefreshInProgress = false;
 async function loadParticipants() {
+  if (participantsRefreshInProgress) return;
+  participantsRefreshInProgress = true;
   try {
-    const response = await fetch("/api/confirmacoes", { cache: "no-store" });
+    const response = await fetch("/api/confirmacoes", {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" }
+    });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível carregar a lista.");
     showParticipants(data);
-    if (data.eventDate && !realtimeClient && !fallbackRefresh) connectRealtime(data.eventDate);
   } catch (error) {
     count.textContent = "Não foi possível carregar as confirmações.";
     status.textContent = error.message;
+  } finally {
+    participantsRefreshInProgress = false;
   }
 }
+
+// Sincroniza automaticamente todas as telas abertas, mesmo se a conexão
+// de atualização em tempo real do navegador não estiver disponível.
+loadParticipants();
+setInterval(loadParticipants, 2500);
+window.addEventListener("focus", loadParticipants);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) loadParticipants();
+});
 form.addEventListener("submit", async event => {
   event.preventDefault();
   button.disabled = true;
@@ -468,7 +460,6 @@ form.addEventListener("submit", async event => {
     button.disabled = false;
   }
 });
-loadParticipants();
 loadSchedule();
 loadLocation();
 </script></body></html>`;
