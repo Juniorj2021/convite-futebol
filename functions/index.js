@@ -74,10 +74,10 @@ const list = document.getElementById("participant-list");
 function normalizeName(name) {
   return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
 }
-function cancellationKey(name) {
-  return "futebol-cancel:" + normalizeName(name);
+function cancellationKey(name, eventDate) {
+  return "futebol-cancel:" + eventDate + ":" + normalizeName(name);
 }
-async function cancelParticipation(name, key, cancelButton) {
+async function cancelParticipation(name, eventDate, key, cancelButton) {
   if (!confirm("Deseja retirar sua confirmação de presença?")) return;
   cancelButton.disabled = true;
   status.textContent = "Cancelando sua participação...";
@@ -87,7 +87,7 @@ async function cancelParticipation(name, key, cancelButton) {
     const response = await fetch("/api/confirmacoes", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, cancellationToken })
+      body: JSON.stringify({ name, eventDate, cancellationToken })
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível cancelar.");
@@ -118,7 +118,7 @@ function showParticipants(data) {
     name.textContent = person.name;
     row.appendChild(name);
 
-    const key = cancellationKey(person.name);
+    const key = cancellationKey(person.name, data.eventDate);
     let token = null;
     try { token = localStorage.getItem(key); } catch {}
     if (token) {
@@ -126,7 +126,7 @@ function showParticipants(data) {
       cancelButton.type = "button";
       cancelButton.className = "cancel-button";
       cancelButton.textContent = "Retirar";
-      cancelButton.addEventListener("click", () => cancelParticipation(person.name, key, cancelButton));
+      cancelButton.addEventListener("click", () => cancelParticipation(person.name, data.eventDate, key, cancelButton));
       row.appendChild(cancelButton);
     }
 
@@ -158,7 +158,7 @@ form.addEventListener("submit", async event => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível confirmar.");
     try {
-      localStorage.setItem(cancellationKey(data.participant.name), data.cancellationToken);
+      localStorage.setItem(cancellationKey(data.participant.name, data.eventDate), data.cancellationToken);
     } catch {}
     status.textContent = "Presença confirmada! Você poderá retirar sua confirmação neste navegador.";
     input.value = "";
