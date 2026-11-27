@@ -44,6 +44,43 @@ button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;c
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
 .participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}.cancel-status{min-height:18px;color:#ffd2ca;font-size:13px;margin:12px 0 0}
 .schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
+@media (max-width:600px){
+  body{padding:12px;place-items:start center}
+  main{width:100%;border-radius:18px}
+  .hero{min-height:clamp(190px,42vw,230px);padding:22px}
+  .content{padding:clamp(18px,4.5vw,24px)}
+  .date{font-size:clamp(15px,4vw,18px)}
+  .detail{font-size:clamp(14px,3.8vw,16px);align-items:flex-start}
+  .symbol{width:34px;height:34px;border-radius:10px;font-size:17px}
+  .participants{align-items:center;padding:12px;gap:8px}
+  .count{font-size:14px;line-height:1.35}
+  .participants-toggle{padding:10px 11px;font-size:12px}
+  .name-input{font-size:16px;padding:14px}
+  button{font-size:15px;padding:15px 14px}
+  .participants-screen{padding:12px}
+  .participants-panel{max-height:calc(100dvh - 24px);padding:16px}
+  .participants-header{align-items:flex-start}
+  .participants-panel h2{font-size:19px}
+  .schedule-controls{flex-wrap:wrap}
+  .schedule-controls input{flex:1 1 150px}
+}
+@media (max-width:380px){
+  body{padding:0}
+  main{border-radius:0;min-height:100svh}
+  .hero{min-height:190px;padding:18px}
+  .content{padding:18px 15px}
+  .participants{flex-wrap:wrap}
+  .count{flex:1 1 100%}
+  .participants-toggle{width:100%}
+  .detail{gap:8px}
+  .edit-time{width:28px;height:28px;flex:none}
+  .participant-row{padding:9px;gap:6px}
+  .cancel-button{padding:8px;font-size:11px}
+}
+@media (max-width:600px) and (orientation:landscape){
+  body{padding:10px}
+  .hero{min-height:160px}
+}
 </style></head><body><main>
 <section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
