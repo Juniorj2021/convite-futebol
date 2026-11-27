@@ -10,7 +10,7 @@ export const addForEvent=internalMutation({args:{eventDate:v.string(),name:v.str
  const rows=await ctx.db.query("confirmacoes").withIndex("by_eventDate",q=>q.eq("eventDate",args.eventDate)).take(500);
  if(args.notify!==false){
   await ctx.scheduler.runAfter(0,internal.push.sendNotification,{title:"⚽ Novo jogador confirmado!",body:args.name+" confirmou presença para o próximo futebol.",kind:"new-player",url:"/"});
-  if(rows.length===10)await ctx.scheduler.runAfter(0,internal.push.sendNotification,{title:"🎉 FUTEBOL CONFIRMADO!",body:"Já temos 10 jogadores confirmados. O futebol está de pé!",kind:"confirmed",url:"/"});
+  if(rows.length===10)await ctx.scheduler.runAfter(0,internal.push.sendNotification,{title:"🎉⚽ É OFICIAL: VAI TER FUTEBOL!",body:"Batemos 10 jogadores confirmados! Prepare o colete: nosso futebol está confirmado. Bora pro campo!",kind:"confirmed",url:"/"});
  }
  return{duplicate:false,participant:{name:args.name,createdAt},cancellationToken:args.cancellationToken};
 }});
