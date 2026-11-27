@@ -2,7 +2,7 @@ function json(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=UTF-8", "Cache-Control": "no-store" } });
 }
 export async function onRequest(context) {
-  const baseUrl = "https://reminiscent-oyster-516.convex.site";
+  const baseUrl = "https://grand-roadrunner-255.convex.site";
   try {
     if (context.request.method === "GET") {
       const response = await fetch(baseUrl + "/local", { headers: { "Accept": "application/json" } });
