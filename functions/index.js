@@ -60,8 +60,9 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 .details{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 22px;align-items:center;margin-bottom:12px}.detail{display:flex;gap:10px;align-items:center;font-size:16px;min-width:0}.detail .time-line{min-width:0;flex-wrap:wrap}.detail strong{white-space:nowrap}.event-status[hidden]{display:none}.event-status{margin:0 0 12px;padding:7px 10px;border-radius:9px;background:#ffffff0d;border:1px solid #ffffff26;text-align:center;font-weight:900;font-size:13px;line-height:1.2;letter-spacing:.25px;color:#ffd2ca}.event-status.confirmed{color:#b8f34a;border-color:#b8f34a66;background:#b8f34a12}.time-line{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}.detail-value{display:flex;align-items:center;gap:8px;min-width:0;overflow-wrap:anywhere}.edit-time{flex:0 0 30px;min-width:30px;width:30px;height:30px;margin:0;padding:0;border:1px solid #7890aa;border-radius:8px;background:#ffffff16;color:#b8f34a;font-size:16px;line-height:1}.symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffffff14;font-size:19px;flex:none}
 .notice{border-left:4px solid #b8f34a;background:#ffffff0d;padding:15px 16px;border-radius:0 12px 12px 0;line-height:1.5;margin:22px 0 26px}
 /* Aviso em uma única linha, com fonte adaptável à largura da tela */
-.notice{white-space:nowrap;font-size:clamp(8px,2.3vw,12px);padding-left:8px;padding-right:8px;line-height:1.25}
-.notice strong{margin-right:4px}
+.notice{white-space:normal;padding-left:8px;padding-right:8px;line-height:1.25}
+.notice strong{display:block;margin:0 0 3px}
+.notice-message{display:block;white-space:nowrap;font-size:clamp(7px,1.8vw,12px);line-height:1.25}
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
@@ -262,7 +263,7 @@ main{min-height:calc(100svh - 48px);display:flex;flex-direction:column}
 <p class="event-status" id="event-status" role="status" aria-live="polite" hidden></p>
 <section class="schedule-editor" id="location-editor" hidden><p class="schedule-title">Editar local</p><div class="schedule-controls"><input id="location-input" type="text" maxlength="100" placeholder="Informe o local" aria-label="Novo local"><button id="location-save" type="button">SALVAR</button></div><p class="schedule-status" id="location-status" role="status"></p></section>
 <section class="schedule-editor" id="schedule-editor" hidden><p class="schedule-title">Editar horário</p><div class="schedule-controls"><input id="schedule-input" type="text" inputmode="numeric" maxlength="5" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" value="06:00" aria-label="Novo horário no formato 24 horas"><button id="schedule-save" type="button">SALVAR</button></div><p class="schedule-status" id="schedule-status" role="status"></p></section>
-<div class="notice"><strong>ATENÇÃO!</strong> Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
+<div class="notice"><strong>ATENÇÃO!</strong><span class="notice-message">Obrigatório o uso do colete ou de camisas nas cores do colete.</span></div>
 <section class="participants" aria-live="polite">
 <p class="count" id="participant-count">Carregando confirmações...</p>
 <button class="participants-toggle" id="participants-toggle" type="button" aria-expanded="false" aria-controls="participants-screen">VER NOMES</button>
