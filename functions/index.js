@@ -45,20 +45,18 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 .participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}.cancel-status{min-height:18px;color:#ffd2ca;font-size:13px;margin:12px 0 0}
 .schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 @media (max-width:600px){
-  body{padding:12px;place-items:start center}
+  body{padding:0;place-items:start center;min-height:100svh}
   .details{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
   .detail{font-size:15px}
-  main{width:100%;border-radius:18px}
-  .hero{min-height:clamp(115px,19svh,165px);padding:16px}
-  .content{padding:12px 15px}
+  main{width:100%;border-radius:0;min-height:100svh}
+  .hero{min-height:clamp(105px,17svh,145px);padding:14px}
+  .content{padding:10px 14px}
   .date{font-size:14px;margin:0 0 9px}
   .detail{font-size:clamp(11px,3vw,13px);align-items:center;gap:6px}.detail .time-line{gap:4px;flex-wrap:nowrap}.detail strong{white-space:normal}
   .symbol{width:27px;height:27px;border-radius:8px;font-size:14px}.edit-time{width:24px;height:24px;font-size:13px}.event-status{font-size:12px;padding:7px 9px;margin:0 0 10px}
   .notice{padding:9px 11px;margin:10px 0 12px;font-size:12px;line-height:1.35}.participants{align-items:center;padding:8px 10px;gap:8px;margin:0 0 10px}
   .count{font-size:12px;line-height:1.25}
   .participants-toggle{padding:7px 9px;font-size:11px}.form-title{font-size:16px;margin:0 0 7px}.name-input{font-size:14px;padding:10px}button{font-size:13px;padding:10px 12px;margin-top:8px}.status{font-size:12px;min-height:16px;margin:6px 0 0}.foot{font-size:10px;margin-top:8px}
-  .name-input{font-size:16px;padding:14px}
-  button{font-size:15px;padding:15px 14px}
   .participants-screen{padding:12px}
   .participants-panel{max-height:calc(100dvh - 24px);padding:16px}
   .participants-header{align-items:flex-start}
@@ -279,7 +277,8 @@ function showParticipants(data) {
   list.replaceChildren();
   cancelStatus.textContent = "";
   count.textContent = data.total + (data.total === 1 ? " pessoa confirmou presença" : " pessoas confirmaram presença");
-  const confirmed = data.total >= 10;\n  eventStatus.hidden = data.total === 0;
+  const confirmed = data.total >= 10;
+  eventStatus.hidden = data.total === 0;
   eventStatus.textContent = confirmed ? "FUTEBOL CONFIRMADO!" : "FUTEBOL AINDA NÃO CONFIRMADO";
   eventStatus.classList.toggle("confirmed", confirmed);
   if (!data.total) {
