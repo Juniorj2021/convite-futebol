@@ -39,7 +39,7 @@ export async function onRequest(context) {
   const canonical = new URL(context.request.url).origin + "/";
   const html = `<!doctype html>
 <html lang="pt-BR"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2"><link rel="icon" type="image/png" sizes="180x180" href="/apple-touch-icon.png?v=5"><meta name="theme-color" content="#071a33"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="​">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2"><link rel="icon" type="image/png" sizes="180x180" href="/apple-touch-icon.png?v=5"><meta name="theme-color" content="#071a33"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Futebol">
 <title>PRÓXIMO FUTEBOL | Campo do Corujão</title><meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${esc(canonical)}">
 <meta property="og:type" content="website"><meta property="og:locale" content="pt_BR">
