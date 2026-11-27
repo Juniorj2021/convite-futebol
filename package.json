@@ -3,13 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Backend Convex para confirmação de presença do Convite Futebol",
-  "engines": {
-    "node": ">=20"
-  },
-  "scripts": {
-    "deploy:convex": "convex deploy"
-  },
-  "dependencies": {
-    "convex": "latest"
-  }
+  "engines": { "node": ">=20" },
+  "scripts": { "deploy:convex": "convex deploy" },
+  "dependencies": { "convex": "latest", "web-push": "^3.6.7" }
 }

@@ -68,6 +68,8 @@ button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;c
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
 .participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}.cancel-status{min-height:18px;color:#ffd2ca;font-size:13px;margin:12px 0 0}
 .schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
+#enable-push{background:#d7e8ff;color:#102b4d;border:1px solid #9bb9d8;font-size:13px;padding:11px 14px;margin-top:10px}
+#push-help{color:#b7c6d8;font-size:11px;line-height:1.35;text-align:center;margin:7px 0 0}
 
 /* Refinamento visual: painel principal e lista de participantes */
 .details{gap:14px;margin-bottom:16px}
@@ -280,6 +282,7 @@ main{min-height:calc(100svh - 48px);display:flex;flex-direction:column}
 <button id="submit-button" type="submit">CONFIRMAR MINHA PARTICIPAÇÃO</button>
 <p class="status" id="form-status" role="status" aria-live="polite"></p>
 </form>
+<button id="enable-push" type="button">🔔 ATIVAR ALERTAS</button><p id="push-help" role="status" aria-live="polite">Receba avisos de novas confirmações e quando o futebol for confirmado.</p>
 <p class="foot">Sua confirmação ficará visível para os demais participantes.</p></section></main>
 <script>
 window.NEXT_EVENT_DATE = "${event.eventDate}";
@@ -306,6 +309,9 @@ const editLocation = document.getElementById("edit-location");
 const locationInput = document.getElementById("location-input");
 const locationSave = document.getElementById("location-save");
 const locationStatus = document.getElementById("location-status");
+const pushButton = document.getElementById("enable-push");
+const pushHelp = document.getElementById("push-help");
+const VAPID_PUBLIC_KEY = "BJoCs45XKiJk9UpIMQl0TYloUh-own_uOdR9VaMGc6672N2ruiv2zpYZhZRQHJ3ejF3pJlPGadJnSwyGxoAW8I4";
 function closeParticipants() {
   participantsScreen.hidden = true;
   participantsToggle.setAttribute("aria-expanded", "false");
@@ -542,6 +548,29 @@ form.addEventListener("submit", async event => {
     button.disabled = false;
   }
 });
+async function enablePushAlerts() {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) { pushHelp.textContent = "Este navegador não oferece suporte a notificações push."; return; }
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIOS && !(navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches)) { pushHelp.textContent = "No iPhone, adicione este site à Tela de Início e abra pelo ícone. Depois volte aqui e ative os alertas."; return; }
+  pushButton.disabled = true; pushHelp.textContent = "Ativando alertas...";
+  try {
+    let permission = Notification.permission;
+    if (permission !== "granted") permission = await Notification.requestPermission();
+    if (permission !== "granted") throw new Error("Permissão de notificações não concedida.");
+    const registration = await navigator.serviceWorker.register("/sw.js"); await navigator.serviceWorker.ready;
+    let subscription = await registration.pushManager.getSubscription();
+    if (!subscription) {
+      let encoded = VAPID_PUBLIC_KEY.replace(/-/g, "+").replace(/_/g, "/"); encoded += "=".repeat((4 - encoded.length % 4) % 4);
+      const key = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
+      subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+    }
+    const response = await fetch("/api/push/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(subscription) });
+    const data = await response.json(); if (!response.ok) throw new Error(data.error || "Não foi possível registrar este aparelho.");
+    pushButton.textContent = "✓ ALERTAS ATIVADOS"; pushHelp.textContent = "Este aparelho receberá avisos mesmo quando o aplicativo estiver fechado.";
+  } catch (error) { pushHelp.textContent = error.message || "Não foi possível ativar os alertas. Tente novamente."; pushButton.disabled = false; }
+}
+pushButton.addEventListener("click", enablePushAlerts);
+if ("Notification" in window && Notification.permission === "granted") pushButton.textContent = "🔔 REATIVAR / SINCRONIZAR ALERTAS";
 loadSchedule();
 loadLocation();
 </script></body></html>`;
