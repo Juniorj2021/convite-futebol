@@ -42,7 +42,7 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
-.participants{margin-top:28px;padding-top:22px;border-top:1px solid #ffffff26}.participants h2{font-size:20px;margin:0 0 6px}.count{color:#b8f34a;font-weight:800;margin:0 0 14px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}
+.participants{margin:0 0 22px;padding:0}.participants-toggle{width:100%;margin:0 0 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:13px;font-size:15px}.participants-panel{padding:16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.participants-panel[hidden]{display:none}.participants h2{font-size:20px;margin:0 0 6px}.count{color:#b8f34a;font-weight:800;margin:0 0 14px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}
 .foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 </style></head><body><main>
 <section class="hero"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
@@ -50,6 +50,14 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <div class="details"><div class="detail"><span class="symbol">⏰</span><span><strong>Horário:</strong> 6h</span></div>
 <div class="detail"><span class="symbol">📍</span><span><strong>Local:</strong> Campo do Corujão</span></div></div>
 <div class="notice"><strong>ATENÇÃO!</strong><br>Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
+<section class="participants" aria-live="polite">
+<button class="participants-toggle" id="participants-toggle" type="button" aria-expanded="false" aria-controls="participants-panel">MOSTRAR PARTICIPANTES</button>
+<div class="participants-panel" id="participants-panel" hidden>
+<h2>Participantes confirmados</h2>
+<p class="count" id="participant-count">Carregando confirmações...</p>
+<ol class="names" id="participant-list"></ol>
+</div>
+</section>
 <form id="confirm-form">
 <h2 class="form-title">Confirme sua participação</h2>
 <label for="participant-name">Seu nome completo</label>
@@ -57,11 +65,6 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <button id="submit-button" type="submit">CONFIRMAR MINHA PARTICIPAÇÃO</button>
 <p class="status" id="form-status" role="status" aria-live="polite"></p>
 </form>
-<section class="participants" aria-live="polite">
-<h2>Participantes confirmados</h2>
-<p class="count" id="participant-count">Carregando confirmações...</p>
-<ol class="names" id="participant-list"></ol>
-</section>
 <p class="foot">Sua confirmação ficará visível para os demais participantes.</p></section></main>
 <script>
 const form = document.getElementById("confirm-form");
@@ -70,6 +73,14 @@ const button = document.getElementById("submit-button");
 const status = document.getElementById("form-status");
 const count = document.getElementById("participant-count");
 const list = document.getElementById("participant-list");
+const participantsToggle = document.getElementById("participants-toggle");
+const participantsPanel = document.getElementById("participants-panel");
+participantsToggle.addEventListener("click", () => {
+  const opening = participantsPanel.hidden;
+  participantsPanel.hidden = !opening;
+  participantsToggle.textContent = opening ? "OCULTAR PARTICIPANTES" : "MOSTRAR PARTICIPANTES";
+  participantsToggle.setAttribute("aria-expanded", String(opening));
+});
 
 function normalizeName(name) {
   return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
@@ -121,11 +132,12 @@ function showParticipants(data) {
     const key = cancellationKey(person.name, data.eventDate);
     let token = null;
     try { token = localStorage.getItem(key); } catch {}
-    if (token) {
+    {
       const cancelButton = document.createElement("button");
       cancelButton.type = "button";
       cancelButton.className = "cancel-button";
       cancelButton.textContent = "Retirar";
+      cancelButton.title = token ? "Retirar sua confirmação neste navegador" : "Retirar confirmação antiga";
       cancelButton.addEventListener("click", () => cancelParticipation(person.name, data.eventDate, key, cancelButton));
       row.appendChild(cancelButton);
     }
