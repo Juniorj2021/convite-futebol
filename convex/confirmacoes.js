@@ -118,14 +118,16 @@ export const removeExpired = internalMutation({
   returns: v.number(),
   handler: async (ctx) => {
     const now = Date.now();
-    const setting = await ctx.db.query("configuracoes")
-      .withIndex("by_key", (q) => q.eq("key", "horario"))
-      .first();
-    const time = setting?.value ?? "06:00";
+    
     const rows = await ctx.db.query("confirmacoes").take(1000);
     let removed = 0;
     for (const row of rows) {
       // A lista fica disponível durante o evento e por mais 5 horas após o horário programado.
+      const day = new Date(row.eventDate + "T12:00:00Z").getUTCDay();
+      const setting = await ctx.db.query("configuracoes")
+        .withIndex("by_key", (q) => q.eq("key", "horario:" + row.eventDate))
+        .first();
+      const time = setting?.value ?? (day === 4 ? "19:00" : "06:00");
       const eventStart = new Date(row.eventDate + "T" + time + ":00-03:00").getTime();
       if (Number.isFinite(eventStart) && now >= eventStart + 5 * 60 * 60 * 1000) {
         await ctx.db.delete(row._id);
