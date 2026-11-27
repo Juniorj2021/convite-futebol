@@ -3,13 +3,15 @@ import {internalMutation,internalQuery,query} from "./_generated/server";
 import {internal} from "./_generated/api";
 export const publicListForEvent=query({args:{eventDate:v.string()},returns:v.array(v.object({name:v.string(),createdAt:v.number()})),handler:async(ctx,args)=>(await ctx.db.query("confirmacoes").withIndex("by_eventDate",q=>q.eq("eventDate",args.eventDate)).order("asc").take(500)).map(({name,createdAt})=>({name,createdAt})).sort((a,b)=>a.name.localeCompare(b.name,"pt-BR"))});
 export const listForEvent=internalQuery({args:{eventDate:v.string()},returns:v.array(v.object({_id:v.id("confirmacoes"),name:v.string(),createdAt:v.number()})),handler:async(ctx,args)=>(await ctx.db.query("confirmacoes").withIndex("by_eventDate",q=>q.eq("eventDate",args.eventDate)).order("asc").take(500)).map(({_id,name,createdAt})=>({_id,name,createdAt})).sort((a,b)=>a.name.localeCompare(b.name,"pt-BR"))});
-export const addForEvent=internalMutation({args:{eventDate:v.string(),name:v.string(),normalizedName:v.string(),cancellationToken:v.string()},returns:v.object({duplicate:v.boolean(),participant:v.object({name:v.string(),createdAt:v.number()}),cancellationToken:v.string()}),handler:async(ctx,args)=>{
+export const addForEvent=internalMutation({args:{eventDate:v.string(),name:v.string(),normalizedName:v.string(),cancellationToken:v.string(),notify:v.optional(v.boolean())},returns:v.object({duplicate:v.boolean(),participant:v.object({name:v.string(),createdAt:v.number()}),cancellationToken:v.string()}),handler:async(ctx,args)=>{
  const existing=await ctx.db.query("confirmacoes").withIndex("by_eventDate_and_normalizedName",q=>q.eq("eventDate",args.eventDate).eq("normalizedName",args.normalizedName)).first();
  if(existing)return{duplicate:true,participant:{name:existing.name,createdAt:existing.createdAt},cancellationToken:""};
  const createdAt=Date.now();await ctx.db.insert("confirmacoes",{eventDate:args.eventDate,name:args.name,normalizedName:args.normalizedName,createdAt,cancellationToken:args.cancellationToken});
  const rows=await ctx.db.query("confirmacoes").withIndex("by_eventDate",q=>q.eq("eventDate",args.eventDate)).take(500);
- await ctx.scheduler.runAfter(0,internal.push.sendNotification,{title:"⚽ Novo jogador confirmado!",body:args.name+" confirmou presença para o próximo futebol.",kind:"new-player",url:"/"});
- if(rows.length===10)await ctx.scheduler.runAfter(0,internal.push.sendNotification,{title:"🎉 FUTEBOL CONFIRMADO!",body:"Já temos 10 jogadores confirmados. O futebol está de pé!",kind:"confirmed",url:"/"});
+ if(args.notify!==false){
+  await ctx.scheduler.runAfter(0,internal.push.sendNotification,{title:"⚽ Novo jogador confirmado!",body:args.name+" confirmou presença para o próximo futebol.",kind:"new-player",url:"/"});
+  if(rows.length===10)await ctx.scheduler.runAfter(0,internal.push.sendNotification,{title:"🎉 FUTEBOL CONFIRMADO!",body:"Já temos 10 jogadores confirmados. O futebol está de pé!",kind:"confirmed",url:"/"});
+ }
  return{duplicate:false,participant:{name:args.name,createdAt},cancellationToken:args.cancellationToken};
 }});
 export const cancelForEvent=internalMutation({args:{eventDate:v.string(),normalizedName:v.string(),cancellationToken:v.optional(v.string())},returns:v.boolean(),handler:async(ctx,args)=>{const row=await ctx.db.query("confirmacoes").withIndex("by_eventDate_and_normalizedName",q=>q.eq("eventDate",args.eventDate).eq("normalizedName",args.normalizedName)).first();if(!row)return false;await ctx.db.delete(row._id);return true;}});
