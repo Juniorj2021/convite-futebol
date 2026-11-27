@@ -42,7 +42,7 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
-.participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}
+.participants{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;padding:14px 16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.count{color:#b8f34a;font-weight:800;margin:0}.participants-toggle{width:auto;flex:none;margin:0;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:11px 14px;font-size:13px}.participants-screen{position:fixed;inset:0;z-index:20;background:#041225f2;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px;overflow-y:auto}.participants-screen[hidden]{display:none}.participants-panel{width:min(100%,580px);max-height:calc(100vh - 48px);overflow-y:auto;padding:20px;background:#102b4d;border:1px solid #7890aa;border-radius:18px;box-shadow:0 20px 60px #0009}.participants-panel h2{font-size:22px;margin:0}.participants-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.participants-close{width:auto;margin:0;padding:9px 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;font-size:13px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}.cancel-status{min-height:18px;color:#ffd2ca;font-size:13px;margin:12px 0 0}
 .schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 </style></head><body><main>
 <section class="hero"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
@@ -58,7 +58,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <div class="participants-screen" id="participants-screen" hidden>
 <div class="participants-panel" role="dialog" aria-modal="true" aria-labelledby="participants-title">
 <div class="participants-header"><h2 id="participants-title">Participantes confirmados</h2><button class="participants-close" id="participants-close" type="button">FECHAR ✕</button></div>
-<ol class="names" id="participant-list"></ol>
+<ol class="names" id="participant-list"></ol><p class="cancel-status" id="cancel-status" role="status" aria-live="polite"></p>
 </div>
 </div>
 <form id="confirm-form">
@@ -76,6 +76,7 @@ const button = document.getElementById("submit-button");
 const status = document.getElementById("form-status");
 const count = document.getElementById("participant-count");
 const list = document.getElementById("participant-list");
+const cancelStatus = document.getElementById("cancel-status");
 const participantsToggle = document.getElementById("participants-toggle");
 const participantsScreen = document.getElementById("participants-screen");
 const participantsClose = document.getElementById("participants-close");
@@ -155,7 +156,8 @@ function cancellationKey(name, eventDate) {
 async function cancelParticipation(name, eventDate, key, cancelButton) {
   if (!confirm("Deseja retirar sua confirmação de presença?")) return;
   cancelButton.disabled = true;
-  status.textContent = "Cancelando sua participação...";
+  cancelStatus.textContent = "Cancelando sua participação...";
+  status.textContent = "";
   try {
     const cancellationToken = localStorage.getItem(key);
     if (!cancellationToken) throw new Error("Código de cancelamento não encontrado neste navegador.");
@@ -167,15 +169,17 @@ async function cancelParticipation(name, eventDate, key, cancelButton) {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível cancelar.");
     localStorage.removeItem(key);
-    status.textContent = "Sua confirmação foi retirada.";
+    status.textContent = "Sua confirmação foi retirada com sucesso.";
+    closeParticipants();
     await loadParticipants();
   } catch (error) {
-    status.textContent = error.message;
+    cancelStatus.textContent = error.message;
     cancelButton.disabled = false;
   }
 }
 function showParticipants(data) {
   list.replaceChildren();
+  cancelStatus.textContent = "";
   count.textContent = data.total + (data.total === 1 ? " pessoa confirmou presença" : " pessoas confirmaram presença");
   if (!data.total) {
     const li = document.createElement("li");
