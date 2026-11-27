@@ -95,3 +95,27 @@ export const cancelForEvent = internalMutation({
     return true;
   },
 });
+
+
+export const removeExpired = internalMutation({
+  args: {},
+  returns: v.number(),
+  handler: async (ctx) => {
+    const now = Date.now();
+    const setting = await ctx.db.query("configuracoes")
+      .withIndex("by_key", (q) => q.eq("key", "horario"))
+      .first();
+    const time = setting?.value ?? "06:00";
+    const rows = await ctx.db.query("confirmacoes").take(1000);
+    let removed = 0;
+    for (const row of rows) {
+      // A lista fica disponível durante o evento e por mais 24 horas.
+      const eventStart = new Date(row.eventDate + "T" + time + ":00-03:00").getTime();
+      if (Number.isFinite(eventStart) && now >= eventStart + 24 * 60 * 60 * 1000) {
+        await ctx.db.delete(row._id);
+        removed++;
+      }
+    }
+    return removed;
+  },
+});
