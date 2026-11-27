@@ -15,7 +15,7 @@ function esc(s) {
 }
 export async function onRequest(context) {
   const date = tomorrowDate();
-  const desc = `Amanhã, ${date}, às 6h, no Campo do Corujão. Obrigatório o uso do colete ou de camisas nas cores do colete.`;
+  const desc = `Amanhã, ${date}, no Campo do Corujão. Obrigatório o uso do colete ou de camisas nas cores do colete.`;
   const canonical = new URL(context.request.url).origin + "/";
   const html = `<!doctype html>
 <html lang="pt-BR"><head>
@@ -43,12 +43,13 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
 .participants{margin:0 0 22px;padding:0}.participants-toggle{width:100%;margin:0 0 12px;background:#ffffff16;color:#fff;border:1px solid #7890aa;padding:13px;font-size:15px}.participants-panel{padding:16px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.participants-panel[hidden]{display:none}.participants h2{font-size:20px;margin:0 0 6px}.count{color:#b8f34a;font-weight:800;margin:0 0 14px}.names{list-style:decimal;margin:0;padding-left:28px;display:grid;gap:8px}.names li{padding:0 0 0 4px;overflow-wrap:anywhere}.participant-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#ffffff0d;border-radius:9px}.person-name{overflow-wrap:anywhere}.cancel-button{width:auto;flex:none;margin:0;padding:8px 10px;border:1px solid #ffb4a8;background:transparent;color:#ffd2ca;font-size:12px;border-radius:8px}.empty{color:#c4d2e1;font-size:14px}
-.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
+.schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor summary{cursor:pointer;color:#b8f34a;font-weight:800}.schedule-controls{display:flex;gap:8px;align-items:center;margin-top:12px}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 </style></head><body><main>
 <section class="hero"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
-<div class="details"><div class="detail"><span class="symbol">⏰</span><span><strong>Horário:</strong> 6h</span></div>
+<div class="details"><div class="detail"><span class="symbol">⏰</span><span><strong>Horário:</strong> <span id="event-time">06:00</span></span></div>
 <div class="detail"><span class="symbol">📍</span><span><strong>Local:</strong> Campo do Corujão</span></div></div>
+<details class="schedule-editor"><summary>Alterar horário do futebol</summary><div class="schedule-controls"><input id="schedule-input" type="time" value="06:00" aria-label="Novo horário"><button id="schedule-save" type="button">SALVAR HORÁRIO</button></div><p class="schedule-status" id="schedule-status" role="status"></p></details>
 <div class="notice"><strong>ATENÇÃO!</strong><br>Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
 <section class="participants" aria-live="polite">
 <button class="participants-toggle" id="participants-toggle" type="button" aria-expanded="false" aria-controls="participants-panel">MOSTRAR PARTICIPANTES</button>
@@ -75,6 +76,10 @@ const count = document.getElementById("participant-count");
 const list = document.getElementById("participant-list");
 const participantsToggle = document.getElementById("participants-toggle");
 const participantsPanel = document.getElementById("participants-panel");
+const eventTime = document.getElementById("event-time");
+const scheduleInput = document.getElementById("schedule-input");
+const scheduleSave = document.getElementById("schedule-save");
+const scheduleStatus = document.getElementById("schedule-status");
 participantsToggle.addEventListener("click", () => {
   const opening = participantsPanel.hidden;
   participantsPanel.hidden = !opening;
@@ -82,6 +87,36 @@ participantsToggle.addEventListener("click", () => {
   participantsToggle.setAttribute("aria-expanded", String(opening));
 });
 
+async function loadSchedule() {
+  try {
+    const response = await fetch("/api/horario", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível carregar o horário.");
+    eventTime.textContent = data.time;
+    scheduleInput.value = data.time;
+  } catch (error) { scheduleStatus.textContent = error.message; }
+}
+scheduleSave.addEventListener("click", async () => {
+  const time = scheduleInput.value;
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+    scheduleStatus.textContent = "Informe um horário válido.";
+    return;
+  }
+  scheduleSave.disabled = true;
+  scheduleStatus.textContent = "Salvando horário...";
+  try {
+    const response = await fetch("/api/horario", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ time })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível salvar.");
+    eventTime.textContent = data.time;
+    scheduleInput.value = data.time;
+    scheduleStatus.textContent = "Horário atualizado para todos os participantes!";
+  } catch (error) { scheduleStatus.textContent = error.message; }
+  finally { scheduleSave.disabled = false; }
+});
 function normalizeName(name) {
   return name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("pt-BR");
 }
@@ -182,6 +217,7 @@ form.addEventListener("submit", async event => {
   }
 });
 loadParticipants();
+loadSchedule();
 </script></body></html>`;
   return new Response(html, { headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "public, max-age=60, s-maxage=300", "X-Content-Type-Options": "nosniff" } });
 }
