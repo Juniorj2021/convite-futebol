@@ -62,7 +62,7 @@ h1{font-size:clamp(34px,8vw,54px);line-height:.98;margin:0;font-weight:900;lette
 /* Aviso em uma única linha, com fonte adaptável à largura da tela */
 .notice{white-space:normal;padding-left:8px;padding-right:8px;line-height:1.25}
 .notice strong{display:block;margin:0 0 3px}
-.notice-message{display:block;white-space:nowrap;font-size:clamp(7px,1.8vw,12px);line-height:1.25}
+.notice-message{display:block;width:100%;text-align:center;white-space:nowrap;font-size:clamp(10px,2.7vw,14px);line-height:1.25}
 .form-title{font-size:20px;margin:0 0 12px}.name-input{width:100%;padding:16px;border:1px solid #68809b;border-radius:12px;background:#fff;color:#102b4d;font-size:17px;outline:none}.name-input:focus{border-color:#b8f34a;box-shadow:0 0 0 3px #b8f34a33}
 button{width:100%;border:0;cursor:pointer;text-align:center;background:#b8f34a;color:#102b13;font-weight:900;font-size:17px;padding:17px 20px;border-radius:12px;margin-top:12px}
 button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;font-size:14px;margin:10px 0 0}
