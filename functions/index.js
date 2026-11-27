@@ -82,7 +82,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .hero{min-height:160px}
 }
 </style></head><body><main>
-<section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
+<section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
 <div class="details"><div class="detail"><span class="symbol">⏰</span><span class="time-line"><span><strong>Horário:</strong> <span id="event-time">06:00</span></span><button class="edit-time" id="edit-time" type="button" aria-label="Editar horário" title="Editar horário">✎</button></span></div>
 <div class="detail"><span class="symbol">📍</span><span class="time-line"><span><strong>Local:</strong> <span id="event-location">Campo do Corujão</span></span><button class="edit-time" id="edit-location" type="button" aria-label="Editar local" title="Editar local">✎</button></span></div></div>
