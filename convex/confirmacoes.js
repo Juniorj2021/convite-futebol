@@ -1,5 +1,23 @@
 import { v } from "convex/values";
-import { internalMutation, internalQuery } from "./_generated/server";
+import { internalMutation, internalQuery, query } from "./_generated/server";
+
+
+
+// Consulta pública reativa para atualizar a lista em tempo real no navegador.
+export const publicListForEvent = query({
+  args: { eventDate: v.string() },
+  returns: v.array(v.object({ name: v.string(), createdAt: v.number() })),
+  handler: async (ctx, args) => {
+    const rows = await ctx.db
+      .query("confirmacoes")
+      .withIndex("by_eventDate", (q) => q.eq("eventDate", args.eventDate))
+      .order("asc")
+      .take(500);
+    return rows
+      .map(({ name, createdAt }) => ({ name, createdAt }))
+      .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  },
+});
 
 export const listForEvent = internalQuery({
   args: { eventDate: v.string() },
