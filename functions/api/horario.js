@@ -6,7 +6,7 @@ export async function onRequest(context) {
   try {
     if (context.request.method === "GET") {
       const eventDate = new URL(context.request.url).searchParams.get("eventDate");
-      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(eventDate || "")) return json({ error: "Data do evento inválida." }, 400);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate || "")) return json({ error: "Data do evento inválida." }, 400);
       const response = await fetch(baseUrl + "/horario?eventDate=" + encodeURIComponent(eventDate), { headers: { "Accept": "application/json" } });
       return json(await response.json(), response.status);
     }
