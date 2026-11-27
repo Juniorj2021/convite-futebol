@@ -112,7 +112,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .detail-value{white-space:normal}
   .detail-value>span:first-child{flex:1 1 auto;line-height:1.2}
   .edit-time{flex:0 0 23px;min-width:23px;width:23px;height:23px}
-  .hero{min-height:clamp(112px,17svh,145px);padding:15px}
+  .hero{min-height:clamp(180px,28svh,225px);padding:18px}
   .content{padding:11px 16px}
   .date{font-size:15px;margin:0 0 9px}
   .details{gap:8px;margin-bottom:9px}
@@ -132,7 +132,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
   .foot{margin-top:7px;font-size:10px}
 }
 @media (max-width:600px) and (max-height:720px){
-  .hero{min-height:105px}
+  .hero{min-height:clamp(155px,24svh,185px)}
   .content{padding-top:9px;padding-bottom:8px}
   .date{margin-bottom:7px}
   .notice{margin-top:7px;margin-bottom:8px}
