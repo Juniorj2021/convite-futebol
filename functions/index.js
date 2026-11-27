@@ -48,7 +48,8 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 <section class="hero"><img class="hero-photo" src="${OG_IMAGE}" alt="" onerror="this.onerror=null;this.src=&#39;https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=85&#39;"><div><span class="tag">É AMANHÃ!</span><h1>FUTEBOL<br>AMANHÃ</h1></div></section>
 <section class="content"><p class="date">${esc(date)}</p>
 <div class="details"><div class="detail"><span class="symbol">⏰</span><span class="time-line"><span><strong>Horário:</strong> <span id="event-time">06:00</span></span><button class="edit-time" id="edit-time" type="button" aria-label="Editar horário" title="Editar horário">✎</button></span></div>
-<div class="detail"><span class="symbol">📍</span><span><strong>Local:</strong> Campo do Corujão</span></div></div>
+<div class="detail"><span class="symbol">📍</span><span class="time-line"><span><strong>Local:</strong> <span id="event-location">Campo do Corujão</span></span><button class="edit-time" id="edit-location" type="button" aria-label="Editar local" title="Editar local">✎</button></span></div></div>
+<section class="schedule-editor" id="location-editor" hidden><p class="schedule-title">Editar local</p><div class="schedule-controls"><input id="location-input" type="text" maxlength="100" placeholder="Informe o local" aria-label="Novo local"><button id="location-save" type="button">SALVAR</button></div><p class="schedule-status" id="location-status" role="status"></p></section>
 <section class="schedule-editor" id="schedule-editor" hidden><p class="schedule-title">Editar horário</p><div class="schedule-controls"><input id="schedule-input" type="text" inputmode="numeric" maxlength="5" pattern="(?:[01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" value="06:00" aria-label="Novo horário no formato 24 horas"><button id="schedule-save" type="button">SALVAR</button></div><p class="schedule-status" id="schedule-status" role="status"></p></section>
 <div class="notice"><strong>ATENÇÃO!</strong><br>Obrigatório o uso do colete ou de camisas nas cores do colete.</div>
 <section class="participants" aria-live="polite">
@@ -86,6 +87,12 @@ const editTime = document.getElementById("edit-time");
 const scheduleInput = document.getElementById("schedule-input");
 const scheduleSave = document.getElementById("schedule-save");
 const scheduleStatus = document.getElementById("schedule-status");
+const eventLocation = document.getElementById("event-location");
+const locationEditor = document.getElementById("location-editor");
+const editLocation = document.getElementById("edit-location");
+const locationInput = document.getElementById("location-input");
+const locationSave = document.getElementById("location-save");
+const locationStatus = document.getElementById("location-status");
 function closeParticipants() {
   participantsScreen.hidden = true;
   participantsToggle.setAttribute("aria-expanded", "false");
@@ -129,6 +136,38 @@ scheduleInput.addEventListener("paste", event => {
   const pasted = (event.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(-4);
   scheduleDigits = pasted;
   renderScheduleDigits();
+});
+editLocation.addEventListener("click", () => {
+  locationInput.value = eventLocation.textContent.trim();
+  locationStatus.textContent = "";
+  locationEditor.hidden = false;
+  locationInput.focus();
+  locationInput.select();
+});
+async function loadLocation() {
+  try {
+    const response = await fetch("/api/local", { cache: "no-store" });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível carregar o local.");
+    eventLocation.textContent = data.location;
+    locationInput.value = data.location;
+  } catch (error) { locationStatus.textContent = error.message; }
+}
+locationSave.addEventListener("click", async () => {
+  const location = locationInput.value.trim();
+  if (location.length < 2) { locationStatus.textContent = "Informe um local válido."; return; }
+  locationSave.disabled = true;
+  locationStatus.textContent = "Salvando local...";
+  try {
+    const response = await fetch("/api/local", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ location }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível salvar o local.");
+    eventLocation.textContent = data.location;
+    locationInput.value = data.location;
+    locationEditor.hidden = true;
+    locationStatus.textContent = "";
+  } catch (error) { locationStatus.textContent = error.message; }
+  finally { locationSave.disabled = false; }
 });
 editTime.addEventListener("click", () => {
   scheduleDigits = "";
@@ -272,6 +311,7 @@ form.addEventListener("submit", async event => {
 });
 loadParticipants();
 loadSchedule();
+loadLocation();
 </script></body></html>`;
   return new Response(html, { headers: { "Content-Type": "text/html; charset=UTF-8", "Cache-Control": "public, max-age=60, s-maxage=300", "X-Content-Type-Options": "nosniff" } });
 }
