@@ -1,20 +1,17 @@
-# Convite Futebol — Cloudflare Pages
+# Convite Futebol
 
-Este projeto usa uma Cloudflare Pages Function em `functions/index.js` para entregar HTML com Open Graph renderizado no servidor. Isso é importante porque o WhatsApp lê as metatags sem executar JavaScript.
+Página de confirmação de presença para o futebol no Campo do Corujão.
 
-## Configuração de implantação
+## Publicação
 
-- Repositório: `Juniorj2021/convite-futebol`
-- Branch de produção: `main`
-- Framework preset: `None`
-- Build command: deixar vazio
-- Build output directory: `/` (raiz do projeto)
-- Root directory: deixar vazio (raiz)
+Este repositório está configurado como **Cloudflare Worker**, pois a implantação atual executa `npx wrangler deploy`.
 
-A pasta `functions` deve permanecer na raiz do repositório, no mesmo nível de `index.html`.
+- Arquivo de configuração: `wrangler.jsonc`
+- Código do Worker: `src/index.js`
+- Comando de implantação: `npx wrangler deploy`
 
-A página calcula a data do dia seguinte no fuso `America/Sao_Paulo`. O botão abre o formulário Google já existente; nenhuma resposta ou configuração do formulário é alterada.
+Não configure este repositório como Pages Functions. O Worker gera o HTML e as metatags Open Graph no servidor, para que o WhatsApp consiga montar a prévia sem executar JavaScript.
 
-## Observação
+A data de amanhã é calculada no fuso `America/Sao_Paulo`. O botão abre o formulário Google já existente, sem alterar suas respostas ou configurações.
 
-Depois da primeira publicação, use o endereço `.pages.dev` criado pelo Cloudflare para compartilhar no WhatsApp. Se a prévia antiga continuar aparecendo, envie o link com um parâmetro novo, por exemplo `?v=2`, para forçar uma nova leitura do preview.
+O nome do Worker configurado é `convite-futebol`.
