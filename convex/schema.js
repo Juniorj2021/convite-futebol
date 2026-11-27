@@ -7,6 +7,7 @@ export default defineSchema({
     name: v.string(),
     normalizedName: v.string(),
     createdAt: v.number(),
+    cancellationToken: v.optional(v.string()),
   })
     .index("by_eventDate", ["eventDate"])
     .index("by_eventDate_and_normalizedName", ["eventDate", "normalizedName"]),
