@@ -46,7 +46,7 @@ button:disabled{opacity:.65;cursor:wait}.status{min-height:22px;color:#d7e6f6;fo
 .schedule-editor{margin:-8px 0 22px;padding:14px;background:#0b2340;border:1px solid #ffffff26;border-radius:12px}.schedule-editor[hidden]{display:none}.schedule-title{font-weight:800;color:#b8f34a;margin:0 0 10px}.schedule-controls{display:flex;gap:8px;align-items:center}.schedule-controls input{min-width:0;flex:1;padding:11px;border:1px solid #68809b;border-radius:9px;font-size:16px}.schedule-controls button{width:auto;margin:0;padding:11px 14px;font-size:13px}.schedule-status{font-size:13px;color:#d7e6f6;margin:8px 0 0}.foot{text-align:center;color:#b7c6d8;font-size:12px;margin-top:18px}
 @media (max-width:600px){
   body{padding:0;place-items:start center;min-height:100svh}
-  .details{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  .details{grid-template-columns:minmax(0,1fr);gap:10px}.detail-value{white-space:nowrap}
   .detail{font-size:15px}
   main{width:100%;border-radius:0;min-height:100svh}
   .hero{min-height:clamp(135px,21svh,175px);padding:18px}
