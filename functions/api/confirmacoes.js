@@ -22,12 +22,8 @@ function json(data, status = 200) {
 
 export async function onRequest(context) {
   const { request, env } = context;
-  if (!env.CONVEX_SITE_URL) {
-    return json({ error: "A conexão com o Convex ainda não foi configurada no Cloudflare Pages." }, 503);
-  }
-
   const eventDate = eventDateKey();
-  const baseUrl = env.CONVEX_SITE_URL.replace(/\/$/, "");
+  const baseUrl = "https://grand-roadrunner-255.convex.site";
   const endpoint = `${baseUrl}/confirmacoes`;
 
   try {
