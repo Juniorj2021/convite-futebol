@@ -629,7 +629,27 @@ async function enablePushAlerts() {
   } catch (error) { pushHelp.textContent = error.message || "Não foi possível ativar os alertas. Tente novamente."; pushButton.disabled = false; }
 }
 pushButton.addEventListener("click", enablePushAlerts);
-if ("Notification" in window && Notification.permission === "granted") pushButton.textContent = "🔔 REATIVAR / SINCRONIZAR ALERTAS";
+async function checkPushStatus() {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) return;
+  if (Notification.permission !== "granted") {
+    pushButton.textContent = "🔔 ATIVAR ALERTAS";
+    return;
+  }
+  try {
+    const registration = await navigator.serviceWorker.register("/sw.js");
+    await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) {
+      pushButton.textContent = "✓ ALERTAS ATIVADOS";
+      pushHelp.textContent = "";
+    } else {
+      pushButton.textContent = "🔔 ATIVAR ALERTAS";
+    }
+  } catch {
+    pushButton.textContent = "🔔 ATIVAR ALERTAS";
+  }
+}
+checkPushStatus();
 loadSchedule();
 loadLocation();
 </script></body></html>`;
